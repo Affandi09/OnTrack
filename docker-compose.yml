@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  web:
+    build: .
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www/html
+    depends_on:
+      - db
+    environment:
+      - PHP_DISPLAY_ERRORS=On
+    networks:
+      - ontrack_net
+
+  db:
+    image: mysql:5.7
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: it_helpdesk
+    volumes:
+      - db_data:/var/lib/mysql
+      - ./migration-docs/it_helpdesk.sql:/docker-entrypoint-initdb.d/init.sql
+    command: --character-set-server=utf8 --collation-server=utf8_general_ci
+    networks:
+      - ontrack_net
+
+volumes:
+  db_data:
+
+
+networks:
+  ontrack_net:
+    driver: bridge

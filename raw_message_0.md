@@ -1,0 +1,137 @@
+TDN (submitter_id:5):
+81      (branch: 7)
+106     ()
+109
+75
+97
+74
+72
+70
+93
+71
+110
+73
+80
+104
+107
+105
+85
+103
+82
+100
+83
+76
+108
+67
+62
+61
+
+KSN(submitter_id:1):
+40
+51
+48
+54
+56
+89
+65
+91
+63
+90
+39
+
+HO (submitter_id:6):
+64
+6
+11
+16
+5
+10
+15
+20
+26
+29
+37
+4
+9
+14
+18
+22
+23
+27
+32
+33
+35
+101
+3
+8
+13
+19
+21
+24
+36
+38
+96
+99
+66
+2
+7
+12
+25
+28
+30
+34
+41
+92
+94
+31
+
+grosir(submitter_id:4):
+52
+79
+84
+87
+77
+95
+42
+88
+43
+78
+55
+50
+53
+44
+49
+47
+57
+46
+45
+58
+98
+86
+
+nustro(submitter_id:2):
+59
+60
+
+dengan Location ID,Nama Cabang (branch),Locations yang Tergolong
+1,KRANGGAN,"TDN Kranggan, KSN KRANGGAN, GROSIR KRANGGAN, HO LT 1 KRANGGAN "
+2,GDC DEPOK,"KSN DEPOK, GROSIR DEPOK "
+3,JATIRAWAMANGUN,"TDN Jati Rawamangun, Kedai Jati Rawamangun, GROSIR - JTR / RAWAMANGUN "
+4,DURI KOSAMBI,"TDN Duri Kosambi, KSN KOSAMBI, GROSIR - KSB / DURI KOSAMBI "
+5,CIKARANG UTARA,Delta 2 Cikarang 
+6,CIKAMPEK,"KSN CIKAMPEK, GROSIR - CKP / CIKAMPEK "
+7,SOEPOMO TEBET,"HO (Semua Lantai & Basement), LT 4, TDN Tebet, NUSTRO TEBET, GROSIR SPM / TEBET "
+8,SOREANG,KEDAI BANDUNG 
+9,KRANJI,"TDN Kranji, GROSIR - KRJ / KRANJI "
+10,KEMANG,"TDN Kemang, NUTRO KEMANG, GROSIR - KMG "
+11,CEGER PS REBO,TDN Ceger 
+12,MATRAMAN,"TDN Matraman, Kedai Matraman, GROSIR - MTM / MATRAMAN "
+13,KARAWACI,"TDN Karawaci, Kedai Karawaci, GROSIR - KWC / KARAWACI "
+14,PURWOKERTO,"TDN Purwokerto, Kedai Purwokerto, Grosir Purwokerto "
+15,SEMARANG,"TDN Semarang, Kedai Semarang, GROSIR - SMG / SEMARANG "
+16,BOGOR,"TDN Bogor, GROSIR - BOG / BOGOR "
+17,CIBINONG,TDN Cibinong 
+18,CILEUNGSI,TDN Cileungsi 
+24,KEBAGUSAN,TDN Kebagusan 
+26,TANJUNG DUREN,TDN Tanjung Duren 
+29,GRAHA 71 BINTARO,TDN Graha 71 Bintaro 
