@@ -23,9 +23,33 @@ class Ticket extends App
         }
 
 
-        $random = rand(100000, 999999);
+        $submitter_id_temp = isset($data['submitter_id']) ? $data['submitter_id'] : 0;
+        $prefix = "IT";
+        if ($submitter_id_temp != 0) {
+            $company_id = $database->get("submitters", "company_id", ["id" => $submitter_id_temp]);
+            if ($company_id) {
+                $company_name = $database->get("companies", "name", ["id" => $company_id]);
+                if ($company_name) {
+                    $prefix = strtoupper(str_replace(' ', '', $company_name));
+                }
+            }
+        }
+
+        $stmt = $database->query("SELECT ticket FROM tickets WHERE ticket LIKE '{$prefix}-%' ORDER BY id DESC LIMIT 1");
+        $last_ticket = $stmt ? $stmt->fetchColumn() : false;
+
+        $new_number = 1;
+        if ($last_ticket) {
+            $parts = explode("-", $last_ticket);
+            if (isset($parts[1]) && is_numeric($parts[1])) {
+                $new_number = intval($parts[1]) + 1;
+            }
+        }
+
+        $random = $prefix . "-" . str_pad($new_number, 5, "0", STR_PAD_LEFT);
         while ($database->has("tickets", ["ticket" => $random])) {
-            $random = rand(100000, 999999);
+            $new_number++;
+            $random = $prefix . "-" . str_pad($new_number, 5, "0", STR_PAD_LEFT);
         }
 
         if (isset($data['notes']))
@@ -45,6 +69,21 @@ class Ticket extends App
             }
         }
 
+        // Fallback client mapping
+        $clientid = isset($data['clientid']) ? $data['clientid'] : 0;
+        if ($clientid == 0 && $submitter_id != 0) {
+            $company_id = $database->get("submitters", "company_id", ["id" => $submitter_id]);
+            if ($company_id) {
+                $company_name = $database->get("companies", "name", ["id" => $company_id]);
+                if ($company_name) {
+                    $client_id_val = $database->get("clients", "id", ["name" => $company_name]);
+                    if ($client_id_val) {
+                        $clientid = $client_id_val;
+                    }
+                }
+            }
+        }
+
         $ticketid = $database->insert("tickets", [
             "ticket" => $random,
             "departmentid" => isset($data['departmentid']) ? $data['departmentid'] : 0,
@@ -52,7 +91,7 @@ class Ticket extends App
             "submitter_id" => $submitter_id,
             "locationid" => $locationid,
             "kendala" => isset($data['kendala']) ? $data['kendala'] : null,
-            "clientid" => $data['clientid'],
+            "clientid" => $clientid,
             "userid" => $userid,
             "adminid" => $data['adminid'],
             "assetid" => $data['assetid'],
@@ -104,6 +143,7 @@ class Ticket extends App
 
             // log and return
             logSystem("Ticket Added - ID: " . $ticketid);
+            $_SESSION['last_ticket_code'] = $random;
             return "10";
         }
 

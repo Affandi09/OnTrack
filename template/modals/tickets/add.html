@@ -21,18 +21,18 @@
     </div>
 
     <div class="row">
-        <?php 
-            global $database;
-            $branches = $database->select("branches", "*");
-            $submitters = $database->select("submitters", "*");
-            $locations_db = $database->select("locations", ["id", "branch_id", "submitter_id"], [
-                "AND" => [
-                    "branch_id[!]" => 0,
-                    "submitter_id[!]" => 0
-                ]
-            ]);
-            $locations_json = json_encode($locations_db);
-            $kendalas = ["JARINGAN", "APLIKASI", "MASTER DATA (ITEM/PRICING)", "HARDWARE"];
+        <?php
+        global $database;
+        $branches = $database->select("branches", "*");
+        $submitters = $database->select("submitters", "*");
+        $locations_db = $database->select("locations", ["id", "branch_id", "submitter_id"], [
+            "AND" => [
+                "branch_id[!]" => 0,
+                "submitter_id[!]" => 0
+            ]
+        ]);
+        $locations_json = json_encode($locations_db);
+        $kendalas = ["JARINGAN", "APLIKASI", "MASTER DATA (ITEM/PRICING)", "HARDWARE"];
         ?>
         <div class="col-md-6">
             <div class="form-group">
@@ -45,9 +45,9 @@
                         <?php _e('Pilih Cabang'); ?>
                     </option>
                     <?php foreach ($branches as $branch) { ?>
-                    <option value="<?php echo $branch['id']; ?>">
-                        <?php echo $branch['name']; ?>
-                    </option>
+                        <option value="<?php echo $branch['id']; ?>">
+                            <?php echo $branch['name']; ?>
+                        </option>
                     <?php } ?>
                 </select>
             </div>
@@ -63,9 +63,9 @@
                         <?php _e('Pilih Submitter'); ?>
                     </option>
                     <?php foreach ($submitters as $submitter) { ?>
-                    <option value="<?php echo $submitter['id']; ?>">
-                        <?php echo $submitter['name']; ?>
-                    </option>
+                        <option value="<?php echo $submitter['id']; ?>">
+                            <?php echo $submitter['name']; ?>
+                        </option>
                     <?php } ?>
                 </select>
             </div>
@@ -73,51 +73,57 @@
         <input type="hidden" name="locationid" id="mapped_locationid" value="0">
 
         <div class="col-md-6">
-            <?php if($isAdmin) { ?>
-            <div class="form-group">
-                <label for="clientid">
-                    <?php _e('Client'); ?>
-                </label>
-                <select class="form-control select2 select2-hidden-accessible" id="clientid" name="clientid"
-                    style="width: 100%;" tabindex="-1" aria-hidden="true">
-                    <option value="0">
-                        <?php _e('None'); ?>
-                    </option>
-                    <?php foreach ($clients as $client) { ?>
-                    <option value='<?php echo $client[' id']; ?>'
-                        <?php if(isset($_GET['clientid'])) { if($_GET['clientid'] == $client['id']) echo "selected"; }  ?>>
-                        <?php echo $client['name']; ?>
-                    </option>
-                    <?php } ?>
-                </select>
-            </div>
+            <?php if ($isAdmin) { ?>
+                <div class="form-group">
+                    <label for="clientid">
+                        <?php _e('Client'); ?>
+                    </label>
+                    <select class="form-control select2 select2-hidden-accessible" id="clientid" name="clientid"
+                        style="width: 100%;" tabindex="-1" aria-hidden="true">
+                        <option value="0">
+                            <?php _e('None'); ?>
+                        </option>
+                        <?php foreach ($clients as $client) { ?>
+                            <option value='<?php echo $client[' id']; ?>'
+                                <?php if (isset($_GET['clientid'])) {
+                                    if ($_GET['clientid'] == $client['id'])
+                                        echo "selected";
+                                } ?>>
+                                <?php echo $client['name']; ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
             <?php } ?>
-            <?php if(!$isAdmin) { ?><input type="hidden" name="clientid" value="<?php echo $liu['clientid']; ?>">
+            <?php if (!$isAdmin) { ?><input type="hidden" name="clientid" value="<?php echo $liu['clientid']; ?>">
             <?php } ?>
         </div>
 
 
         <div class="col-md-6">
-            <?php if(in_array("manageTicketAssignment",$perms)) { ?>
-            <div class="form-group">
-                <label for="adminid">
-                    <?php _e('Assign To'); ?>
-                </label>
-                <select class="form-control select2 select2-hidden-accessible" id="adminid" name="adminid"
-                    style="width: 100%;" tabindex="-1" aria-hidden="true">
-                    <option value="0">
-                        <?php _e('Nobody'); ?>
-                    </option>
-                    <?php foreach ($admins as $admin) { ?>
-                    <option value='<?php echo $admin[' id']; ?>'
-                        <?php if(isset($liu['id'])) { if($liu['id'] == $admin['id']) echo "selected"; }  ?>>
-                        <?php echo $admin['name']; ?>
-                    </option>
-                    <?php } ?>
-                </select>
-            </div>
+            <?php if (in_array("manageTicketAssignment", $perms)) { ?>
+                <div class="form-group">
+                    <label for="adminid">
+                        <?php _e('Assign To'); ?>
+                    </label>
+                    <select class="form-control select2 select2-hidden-accessible" id="adminid" name="adminid"
+                        style="width: 100%;" tabindex="-1" aria-hidden="true">
+                        <option value="0">
+                            <?php _e('Nobody'); ?>
+                        </option>
+                        <?php foreach ($admins as $admin) { ?>
+                            <option value='<?php echo $admin[' id']; ?>'
+                                <?php if (isset($liu['id'])) {
+                                    if ($liu['id'] == $admin['id'])
+                                        echo "selected";
+                                } ?>>
+                                <?php echo $admin['name']; ?>
+                            </option>
+                        <?php } ?>
+                    </select>
+                </div>
             <?php } ?>
-            <?php if(!in_array("manageTicketAssignment",$perms)) { ?><input type="hidden" name="adminid" value="0">
+            <?php if (!in_array("manageTicketAssignment", $perms)) { ?><input type="hidden" name="adminid" value="0">
             <?php } ?>
 
         </div>
@@ -134,15 +140,15 @@
                 </label>
                 <select class="form-control assetsSelect select2-hidden-accessible" id="assetid" name="assetid"
                     style="width: 100%;">
-                    <?php if(isset($_GET['assetid'])) { ?>
-                    <option value="<?php echo $_GET['assetid']; ?>">
-                        <?php echo getSingleValue("assets","tag",$_GET['assetid']) ; ?>
-                        <?php echo getSingleValue("assets","name",$_GET['assetid']) ; ?>
-                    </option>
+                    <?php if (isset($_GET['assetid'])) { ?>
+                        <option value="<?php echo $_GET['assetid']; ?>">
+                            <?php echo getSingleValue("assets", "tag", $_GET['assetid']); ?>
+                            <?php echo getSingleValue("assets", "name", $_GET['assetid']); ?>
+                        </option>
                     <?php } else { ?>
-                    <option value="0">
-                        <?php _e('None'); ?>
-                    </option>
+                        <option value="0">
+                            <?php _e('None'); ?>
+                        </option>
                     <?php } ?>
                 </select>
             </div>
@@ -155,15 +161,15 @@
                 </label>
                 <select class="form-control projectsSelect select2-hidden-accessible" id="projectid" name="projectid"
                     style="width: 100%;" tabindex="-1" aria-hidden="true">
-                    <?php if(isset($_GET['projectid'])) { ?>
-                    <option value="<?php echo $_GET['projectid']; ?>">
-                        <?php echo getSingleValue("projects","tag",$_GET['projectid']) ; ?>
-                        <?php echo getSingleValue("projects","name",$_GET['projectid']) ; ?>
-                    </option>
+                    <?php if (isset($_GET['projectid'])) { ?>
+                        <option value="<?php echo $_GET['projectid']; ?>">
+                            <?php echo getSingleValue("projects", "tag", $_GET['projectid']); ?>
+                            <?php echo getSingleValue("projects", "name", $_GET['projectid']); ?>
+                        </option>
                     <?php } else { ?>
-                    <option value="0">
-                        <?php _e('None'); ?>
-                    </option>
+                        <option value="0">
+                            <?php _e('None'); ?>
+                        </option>
                     <?php } ?>
                 </select>
             </div>
@@ -174,19 +180,19 @@
     <div class="row">
 
         <div class="col-md-6">
-            <?php if($isAdmin) { ?>
-            <div class="form-group">
-                <label for="email">
-                    <?php _e('User or Email Address'); ?> * <i class="fa fa-info-circle fa-fw" data-toggle="tooltip"
-                        title="<?php _e('Select an user for this ticket or type an email address and press enter.'); ?>"></i>
-                </label>
-                <select class="form-control usersSelectEmail select2-hidden-accessible" id="email" name="email"
-                    style="width: 100%;" tabindex="-1" aria-hidden="true" required>
+            <?php if ($isAdmin) { ?>
+                <div class="form-group">
+                    <label for="email">
+                        <?php _e('User or Email Address'); ?> * <i class="fa fa-info-circle fa-fw" data-toggle="tooltip"
+                            title="<?php _e('Select an user for this ticket or type an email address and press enter.'); ?>"></i>
+                    </label>
+                    <select class="form-control usersSelectEmail select2-hidden-accessible" id="email" name="email"
+                        style="width: 100%;" tabindex="-1" aria-hidden="true" required>
 
-                </select>
-            </div>
+                    </select>
+                </div>
             <?php } ?>
-            <?php if(!$isAdmin) { ?><input type="hidden" name="email" value="<?php echo $liu['email']; ?>">
+            <?php if (!$isAdmin) { ?><input type="hidden" name="email" value="<?php echo $liu['email']; ?>">
             <?php } ?>
 
         </div>
@@ -201,9 +207,9 @@
                         <?php _e('Pilih Kendala'); ?>
                     </option>
                     <?php foreach ($kendalas as $kendala) { ?>
-                    <option value="<?php echo $kendala; ?>">
-                        <?php echo $kendala; ?>
-                    </option>
+                        <option value="<?php echo $kendala; ?>">
+                            <?php echo $kendala; ?>
+                        </option>
                     <?php } ?>
                 </select>
             </div>
@@ -223,14 +229,14 @@
     <div class="row">
 
         <div class="col-md-4">
-            <?php if($isAdmin) { ?>
-            <div class="form-group">
-                <div class="checkbox"><label><input type="checkbox" name="notification" value="true" checked="yes">
-                        <?php _e('Send New Ticket Notification'); ?>
-                    </label></div>
-            </div>
+            <?php if ($isAdmin) { ?>
+                <div class="form-group">
+                    <div class="checkbox"><label><input type="checkbox" name="notification" value="true" checked="yes">
+                            <?php _e('Send New Ticket Notification'); ?>
+                        </label></div>
+                </div>
             <?php } ?>
-            <?php if(!$isAdmin) { ?><input type="hidden" name="notification" value="false">
+            <?php if (!$isAdmin) { ?><input type="hidden" name="notification" value="false">
             <?php } ?>
         </div>
 
@@ -292,16 +298,16 @@
     $('.summernote-modal').summernote({ height: 200, maximumImageFileSize: 524288, dialogsInBody: true, disableDragAndDrop: true });
 
 
-    var clientid = <? php echo isset($_GET['clientid']) ? intval($_GET['clientid']) : 0; ?>;
+    var clientid = <?php echo isset($_GET['clientid']) ? intval($_GET['clientid']) : 0; ?>;
 
 
     $("#clientid").on("change", function (e) {
         clientid = $("#clientid").val();
     });
 
-        <? php if (!$isAdmin) { ?>
-        clientid = <? php echo isset($liu['clientid']) ? intval($liu['clientid']) : 0; ?>;
-        <? php } ?>
+    <?php if (!$isAdmin) { ?>
+            clientid = <?php echo isset($liu['clientid']) ? intval($liu['clientid']) : 0; ?>;
+    <?php } ?>
 
         $('.assetsSelect').select2({
             ajax: {
@@ -380,7 +386,7 @@
 
     // Location ID Mapping
     $(document).ready(function () {
-        var mappings = <? php echo isset($locations_json) ? $locations_json : '[]'; ?>;
+        var mappings = <?php echo isset($locations_json) ? $locations_json : '[]'; ?>;
 
         function updateLocationMapping() {
             var branchId = $('#branch_id').val();

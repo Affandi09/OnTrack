@@ -529,6 +529,22 @@ if ($route == "submitticket") {
 	$kendalas = ["JARINGAN", "APLIKASI", "MASTER DATA (ITEM/PRICING)", "HARDWARE"];
 }
 
+if ($route == "checkticket") {
+	if (isset($_GET['ticket']) && !empty($_GET['ticket'])) {
+		$ticket_code = $_GET['ticket'];
+		$ticket = $database->get("tickets", "*", ["ticket" => $ticket_code]);
+		if ($ticket) {
+			$replies = getTableFiltered("tickets_replies", "ticketid", $ticket['id'], "", "", "*", "id", "DESC");
+		} else {
+			$ticket = false;
+			$error_message = __("Ticket with code") . " '" . htmlentities($ticket_code) . "' " . __("not found.");
+		}
+	} else {
+		$ticket = false;
+		$error_message = __("No ticket code provided.");
+	}
+}
+
 
 // ISSUES
 if ($route == "issues/active") {
