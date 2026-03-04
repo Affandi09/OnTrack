@@ -526,6 +526,23 @@ if ($route == "submitticket") {
 	]);
 	$locations_json = json_encode($locations_db);
 
+	$client_mappings = [];
+	foreach ($submitters as $sub) {
+		if ($sub['company_id']) {
+			$comp_name = $database->get("companies", "name", ["id" => $sub['company_id']]);
+			if ($comp_name) {
+				$client_id_val = $database->get("clients", "id", ["name" => $comp_name]);
+				if ($client_id_val) {
+					$client_mappings[] = [
+						"submitter_id" => $sub['id'],
+						"client_id" => $client_id_val
+					];
+				}
+			}
+		}
+	}
+	$clients_json = json_encode($client_mappings);
+
 	$kendalas = ["JARINGAN", "APLIKASI", "MASTER DATA (ITEM/PRICING)", "HARDWARE"];
 }
 
@@ -686,6 +703,27 @@ if ($route == "reports") {
 	$admins = getTableFiltered("people", "type", "admin");
 	$users = getTableFiltered("people", "type", "user");
 	$pageTitle = __("Reports");
+}
+
+if ($route == "reports/checkEmpty") {
+	if ($_GET['report'] == "ticketsReport") {
+		$startdate = dateDb($_GET['startDate']) . " 00:00:00";
+		$enddate = dateDb($_GET['endDate']) . " 23:59:59";
+		if ($_GET['clientid'] == "0") {
+			$count = $database->count("tickets", [
+				"timestamp[<>]" => [$startdate, $enddate]
+			]);
+		} else {
+			$count = $database->count("tickets", [
+				"AND" => [
+					"timestamp[<>]" => [$startdate, $enddate],
+					"clientid" => $_GET['clientid']
+				]
+			]);
+		}
+		echo json_encode(['count' => $count]);
+		exit;
+	}
 }
 
 if ($route == "reports/view") {

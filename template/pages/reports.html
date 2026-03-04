@@ -2,193 +2,476 @@
 <aside class="right-side">
 	<!-- Content Header (Page header) -->
 	<section class="content-header">
-		<h1><?php _e('Reports'); ?><small> <?php _e('Generare and view reports'); ?></small></h1>
-		<ol class="breadcrumb"><li><a href="?route=dashboard"><i class="fa fa-dashboard"></i> <?php _e('Home'); ?></a></li><li class="active"><?php _e('Reports'); ?></li></ol>
+		<h1>
+			<?php _e('Reports'); ?><small>
+				<?php _e('Generare and view reports'); ?>
+			</small>
+		</h1>
+		<ol class="breadcrumb">
+			<li><a href="?route=dashboard"><i class="fa fa-dashboard"></i>
+					<?php _e('Home'); ?>
+				</a></li>
+			<li class="active">
+				<?php _e('Reports'); ?>
+			</li>
+		</ol>
 	</section>
 
 	<!-- Main content -->
 	<section class="content">
 		<?php if(!empty($statusmessage)): ?>
-				<div class="row"><div class='col-md-12'><div class="alert alert-<?php print $statusmessage["type"]; ?> alert-auto" role="alert"><?php print __($statusmessage["message"]); ?></div></div></div>
+		<div class="row">
+			<div class='col-md-12'>
+				<div class="alert alert-<?php print $statusmessage[" type"]; ?> alert-auto" role="alert">
+					<?php print __($statusmessage["message"]); ?>
+				</div>
+			</div>
+		</div>
 		<?php endif; ?>
 		<div class="row">
-			<div class="col-md-6">
-				<div class="box box-primary">
-          			<div class="box-header with-border"><h3 class="box-title"><?php _e('Timesheet'); ?></h3></div><!-- /.box-header -->
-					<form role="form" method="get" action="" target="_blank">
-	                    <div class="box-body">
-							<p><?php _e('Generate a report with all the tasks in the selected period.'); ?></p>
+			<div class="col-md-12">
+				<div class="box box-primary"
+					style="border-top: none; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.08); overflow: hidden; margin-bottom: 30px;">
+					<div class="box-header with-border"
+						style="background: linear-gradient(to right, #f8fafc, #ffffff); border-bottom: 1px solid #edf2f7; padding: 20px 25px;">
+						<h3 class="box-title"
+							style="font-weight: 700; color: #2c3e50; font-size: 22px; display: flex; align-items: center;">
+							<i class="fa fa-ticket text-primary" style="margin-right: 12px; font-size: 24px;"></i>
+							<?php _e('Tickets Report'); ?>
+						</h3>
+						<p style="margin-top: 5px; margin-bottom: 0; color: #64748b; font-size: 14px;">
+							<?php _e('Generate a report with all the tickets opened in the selected period.'); ?>
+						</p>
+					</div><!-- /.box-header -->
+					<form id="ticketsReportForm" role="form" method="get" action="" target="_blank">
+						<div class="box-body" style="padding: 25px;">
 
-							<?php if($isAdmin) { ?>
-								<div class="form-group">
-									<label for="clientid" class="control-label"><?php _e('Client'); ?></label>
-									<select class="form-control select2 select2-hidden-accessible" id="clientid" name="clientid" style="width: 100%;" tabindex="-1" aria-hidden="true">
-										<option value="0">- <?php _e('ALL'); ?> -</option>
-										<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
-									</select>
+							<div class="row">
+								<?php if($isAdmin) { ?>
+								<div class="col-md-4">
+									<div class="form-group">
+										<label for="clientid" class="control-label"
+											style="font-weight: 600; color: #475569; margin-bottom: 8px;">
+											<?php _e('Client'); ?>
+										</label>
+										<select class="form-control select2 select2-hidden-accessible" id="clientid"
+											name="clientid" style="width: 100%; border-radius: 6px;" tabindex="-1"
+											aria-hidden="true">
+											<option value="0">-
+												<?php _e('ALL'); ?> -
+											</option>
+											<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
+										</select>
+									</div>
 								</div>
-							<?php } ?>
-							<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid" value="<?php echo $liu['clientid']; ?>"> <?php } ?>
+								<?php } ?>
+								<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid"
+									value="<?php echo $liu['clientid']; ?>">
+								<?php } ?>
 
-							<div class="form-group">
-								<label for="startDate"><?php _e('Start Date'); ?></label>
-								<div class="input-group">
-									<input type="text" class="form-control" id="startDate" name="startDate" required>
-									<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+								<div class="<?php echo $isAdmin ? 'col-md-4' : 'col-md-6'; ?>">
+									<div class="form-group">
+										<label for="startDate"
+											style="font-weight: 600; color: #475569; margin-bottom: 8px;">
+											<?php _e('Start Date'); ?>
+										</label>
+										<div class="input-group">
+											<input type="text" class="form-control" id="startDate" name="startDate"
+												style="border-radius: 6px 0 0 6px;" required>
+											<span class="input-group-addon"
+												style="border-radius: 0 6px 6px 0; background-color: #f8fafc; color: #94a3b8;"><i
+													class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+								</div>
+
+								<div class="<?php echo $isAdmin ? 'col-md-4' : 'col-md-6'; ?>">
+									<div class="form-group">
+										<label for="endDate"
+											style="font-weight: 600; color: #475569; margin-bottom: 8px;">
+											<?php _e('End Date'); ?>
+										</label>
+										<div class="input-group">
+											<input type="text" class="form-control" id="endDate" name="endDate"
+												style="border-radius: 6px 0 0 6px;" required>
+											<span class="input-group-addon"
+												style="border-radius: 0 6px 6px 0; background-color: #f8fafc; color: #94a3b8;"><i
+													class="fa fa-calendar"></i></span>
+										</div>
+									</div>
 								</div>
 							</div>
+
+							<input type="hidden" name="report" value="ticketsReport">
+							<input type="hidden" name="route" value="reports/view">
+						</div>
+						<div class="box-footer"
+							style="padding: 20px 25px; background-color: #f8fafc; border-top: 1px solid #edf2f7; text-align: right;">
+							<button type="submit" class="btn btn-primary btn-lg"
+								style="border-radius: 8px; padding: 10px 30px; font-weight: 600; box-shadow: 0 4px 12px rgba(60,141,188,0.3); transition: all 0.2s;">
+								<i class="fa fa-search" style="margin-right: 6px;"></i>
+								<?php _e('Generate Report'); ?>
+							</button>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			$(document).ready(function () {
+				$('#ticketsReportForm').on('submit', function (e) {
+					var $form = $(this);
+					var isIntercepting = $form.data('intercepting');
+
+					// If we have already validated, allow native submission to open the new tab.
+					if (isIntercepting === false) {
+						return true;
+					}
+
+					e.preventDefault();
+
+					// We manually build the payload. Using .serialize() includes the hidden route=reports/view 
+					// which overrides ?route=reports/checkEmpty because of PHP's $_GET variable precedence.
+					var requestData = {
+						clientid: $form.find('[name="clientid"]').val(),
+						startDate: $form.find('[name="startDate"]').val(),
+						endDate: $form.find('[name="endDate"]').val(),
+						report: 'ticketsReport'
+					};
+
+					// Check count in background
+					$.ajax({
+						url: '?route=reports/checkEmpty',
+						type: 'GET',
+						data: requestData,
+						dataType: 'json',
+						success: function (response) {
+							if (parseInt(response.count) === 0) {
+								Swal.fire({
+									icon: 'info',
+									title: 'Tidak Ada Data',
+									text: 'Tidak ada data tiket yang ditemukan pada rentang tanggal, dan/atau client yang Anda pilih.',
+									confirmButtonColor: '#3085d6',
+									confirmButtonText: 'Tutup'
+								});
+							} else {
+								// Validated. Allow native HTML submission to execute.
+								$form.data('intercepting', false);
+								$form[0].submit();
+
+								// Reset flag so subsequent clicks check again
+								setTimeout(function () {
+									$form.data('intercepting', true);
+								}, 1000);
+							}
+						},
+						error: function (xhr, status, error) {
+							// For debugging: showing what the API returned if JSON parsing fails
+							alert("AJAX Error: \nStatus: " + status + "\nError: " + error + "\nResponse: " + xhr.responseText.substring(0, 500));
+
+							// On error, just submit it normally to let PHP throw the original page
+							$form.data('intercepting', false);
+							$form[0].submit();
+						}
+					});
+				});
+			});
+		</script>
+
+		<div class="row">
+			<div class="col-md-6">
+				<div class="box box-primary"
+					style="border-top: 3px solid #3c8dbc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 25px;">
+					<div class="box-header with-border"
+						style="background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #f4f4f4;">
+						<h3 class="box-title" style="font-weight: 600; color: #333; font-size: 18px;"><i
+								class="fa fa-clock-o text-primary" style="margin-right: 8px;"></i>
+							<?php _e('Timesheet'); ?>
+						</h3>
+					</div><!-- /.box-header -->
+					<form role="form" method="get" action="" target="_blank">
+						<div class="box-body" style="padding: 20px;">
+							<p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+								<?php _e('Generate a report with all the tasks in the selected period.'); ?>
+							</p>
+
+							<?php if($isAdmin) { ?>
 							<div class="form-group">
-								<label for="endDate"><?php _e('End Date'); ?></label>
-								<div class="input-group">
-									<input type="text" class="form-control" id="endDate" name="endDate" required>
-									<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+								<label for="clientid" class="control-label" style="font-weight: 500; color: #555;">
+									<?php _e('Client'); ?>
+								</label>
+								<select class="form-control select2 select2-hidden-accessible" id="clientid"
+									name="clientid" style="width: 100%; border-radius: 4px;" tabindex="-1"
+									aria-hidden="true">
+									<option value="0">-
+										<?php _e('ALL'); ?> -
+									</option>
+									<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
+								</select>
+							</div>
+							<?php } ?>
+							<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid"
+								value="<?php echo $liu['clientid']; ?>">
+							<?php } ?>
+
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="startDate" style="font-weight: 500; color: #555;">
+											<?php _e('Start Date'); ?>
+										</label>
+										<div class="input-group">
+											<input type="text" class="form-control" id="startDate" name="startDate"
+												style="border-radius: 4px 0 0 4px;" required>
+											<span class="input-group-addon" style="border-radius: 0 4px 4px 0;"><i
+													class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="endDate" style="font-weight: 500; color: #555;">
+											<?php _e('End Date'); ?>
+										</label>
+										<div class="input-group">
+											<input type="text" class="form-control" id="endDate" name="endDate"
+												style="border-radius: 4px 0 0 4px;" required>
+											<span class="input-group-addon" style="border-radius: 0 4px 4px 0;"><i
+													class="fa fa-calendar"></i></span>
+										</div>
+									</div>
 								</div>
 							</div>
 							<input type="hidden" name="report" value="timesheet">
 							<input type="hidden" name="route" value="reports/view">
 						</div>
-						<div class="box-footer"><button type="submit" class="btn btn-primary btn-flat"><?php _e('Generate'); ?></button></div>
+						<div class="box-footer"
+							style="background-color: #fafafa; border-top: 1px solid #f4f4f4; padding: 15px 20px; text-align: right;">
+							<button type="submit" class="btn btn-primary"
+								style="border-radius: 6px; padding: 8px 20px; font-weight: 500;">
+								<i class="fa fa-file-text-o" style="margin-right: 5px;"></i>
+								<?php _e('Generate'); ?>
+							</button>
+						</div>
 					</form>
 				</div>
 
-				<div class="box box-primary">
-          			<div class="box-header with-border"><h3 class="box-title"><?php _e('Timesheet With Summary'); ?></h3></div><!-- /.box-header -->
+				<div class="box box-primary"
+					style="border-top: 3px solid #3c8dbc; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 25px;">
+					<div class="box-header with-border"
+						style="background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #f4f4f4;">
+						<h3 class="box-title" style="font-weight: 600; color: #333; font-size: 18px;">
+							<i class="fa fa-calendar-check-o text-primary" style="margin-right: 8px;"></i>
+							<?php _e('Timesheet With Summary'); ?>
+						</h3>
+					</div><!-- /.box-header -->
 					<form role="form" method="get" action="" target="_blank">
-	                    <div class="box-body">
-							<p><?php _e('Generate a report with all the tasks in the selected period and a summary of all assets and licenses.'); ?></p>
+						<div class="box-body" style="padding: 20px;">
+							<p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+								<?php _e('Generate a report with all the tasks in the selected period and a summary of all assets and licenses.'); ?>
+							</p>
 							<?php if($isAdmin) { ?>
-								<div class="form-group">
-									<label for="clientid" class="control-label"><?php _e('Client'); ?></label>
-									<select class="form-control select2 select2-hidden-accessible" id="clientid" name="clientid" style="width: 100%;" tabindex="-1" aria-hidden="true">
-										<option value="0">- <?php _e('ALL'); ?> -</option>
-										<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
-									</select>
-								</div>
-							<?php } ?>
-							<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid" value="<?php echo $liu['clientid']; ?>"> <?php } ?>
-
 							<div class="form-group">
-								<label for="startDate"><?php _e('Start Date'); ?></label>
-								<div class="input-group">
-									<input type="text" class="form-control" id="startDate" name="startDate" required>
-									<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-								</div>
+								<label for="clientid" class="control-label" style="font-weight: 500; color: #555;">
+									<?php _e('Client'); ?>
+								</label>
+								<select class="form-control select2 select2-hidden-accessible" id="clientid"
+									name="clientid" style="width: 100%; border-radius: 4px;" tabindex="-1"
+									aria-hidden="true">
+									<option value="0">-
+										<?php _e('ALL'); ?> -
+									</option>
+									<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
+								</select>
 							</div>
-							<div class="form-group">
-								<label for="endDate"><?php _e('End Date'); ?></label>
-								<div class="input-group">
-									<input type="text" class="form-control" id="endDate" name="endDate" required>
-									<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
+							<?php } ?>
+							<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid"
+								value="<?php echo $liu['clientid']; ?>">
+							<?php } ?>
+
+							<div class="row">
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="startDate" style="font-weight: 500; color: #555;">
+											<?php _e('Start Date'); ?>
+										</label>
+										<div class="input-group">
+											<input type="text" class="form-control" id="startDate" name="startDate"
+												style="border-radius: 4px 0 0 4px;" required>
+											<span class="input-group-addon" style="border-radius: 0 4px 4px 0;"><i
+													class="fa fa-calendar"></i></span>
+										</div>
+									</div>
+								</div>
+								<div class="col-md-6">
+									<div class="form-group">
+										<label for="endDate" style="font-weight: 500; color: #555;">
+											<?php _e('End Date'); ?>
+										</label>
+										<div class="input-group">
+											<input type="text" class="form-control" id="endDate" name="endDate"
+												style="border-radius: 4px 0 0 4px;" required>
+											<span class="input-group-addon" style="border-radius: 0 4px 4px 0;"><i
+													class="fa fa-calendar"></i></span>
+										</div>
+									</div>
 								</div>
 							</div>
 							<input type="hidden" name="report" value="timesheetSummary">
 							<input type="hidden" name="route" value="reports/view">
 						</div>
-						<div class="box-footer"><button type="submit" class="btn btn-primary btn-flat"><?php _e('Generate'); ?></button></div>
-					</form>
-				</div>
-
-				<div class="box box-primary">
-					<div class="box-header with-border"><h3 class="box-title"><?php _e('Tickets Report'); ?></h3></div><!-- /.box-header -->
-					<form role="form" method="get" action="" target="_blank">
-						<div class="box-body">
-							<p><?php _e('Generate a report with all the tickets opened in the selected period.'); ?></p>
-							<?php if($isAdmin) { ?>
-								<div class="form-group">
-									<label for="clientid" class="control-label"><?php _e('Client'); ?></label>
-									<select class="form-control select2 select2-hidden-accessible" id="clientid" name="clientid" style="width: 100%;" tabindex="-1" aria-hidden="true">
-										<option value="0">- <?php _e('ALL'); ?> -</option>
-										<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
-									</select>
-								</div>
-							<?php } ?>
-							<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid" value="<?php echo $liu['clientid']; ?>"> <?php } ?>
-
-							<div class="form-group">
-								<label for="startDate"><?php _e('Start Date'); ?></label>
-								<div class="input-group">
-									<input type="text" class="form-control" id="startDate" name="startDate" required>
-									<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="endDate"><?php _e('End Date'); ?></label>
-								<div class="input-group">
-									<input type="text" class="form-control" id="endDate" name="endDate" required>
-									<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-								</div>
-							</div>
-							<input type="hidden" name="report" value="ticketsReport">
-							<input type="hidden" name="route" value="reports/view">
+						<div class="box-footer"
+							style="background-color: #fafafa; border-top: 1px solid #f4f4f4; padding: 15px 20px; text-align: right;">
+							<button type="submit" class="btn btn-primary"
+								style="border-radius: 6px; padding: 8px 20px; font-weight: 500;">
+								<i class="fa fa-file-text-o" style="margin-right: 5px;"></i>
+								<?php _e('Generate'); ?>
+							</button>
 						</div>
-						<div class="box-footer"><button type="submit" class="btn btn-primary btn-flat"><?php _e('Generate'); ?></button></div>
 					</form>
 				</div>
+
+
 
 			</div>
 
 			<div class="col-md-6">
-				<div class="box box-primary">
-          			<div class="box-header with-border"><h3 class="box-title"><?php _e('Client Summary'); ?></h3></div><!-- /.box-header -->
+				<div class="box box-primary"
+					style="border-top: 3px solid #00a65a; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 25px;">
+					<div class="box-header with-border"
+						style="background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #f4f4f4;">
+						<h3 class="box-title" style="font-weight: 600; color: #333; font-size: 18px;">
+							<i class="fa fa-building-o text-success" style="margin-right: 8px;"></i>
+							<?php _e('Client Summary'); ?>
+						</h3>
+					</div><!-- /.box-header -->
 					<form role="form" method="get" action="" target="_blank">
-	                    <div class="box-body">
-							<p><?php _e('Generate a report with a summary of all assets and licenses assigned to a client.'); ?></p>
+						<div class="box-body" style="padding: 20px;">
+							<p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+								<?php _e('Generate a report with a summary of all assets and licenses assigned to a client.'); ?>
+							</p>
 							<?php if($isAdmin) { ?>
-								<div class="form-group">
-									<label for="clientid" class="control-label">Client</label>
-									<select class="form-control select2 select2-hidden-accessible" id="clientid" name="clientid" style="width: 100%;" tabindex="-1" aria-hidden="true">
-										<option value="0">- <?php _e('ALL'); ?> -</option>
-										<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
-									</select>
-								</div>
+							<div class="form-group">
+								<label for="clientid" class="control-label" style="font-weight: 500; color: #555;">
+									<?php _e('Client'); ?>
+								</label>
+								<select class="form-control select2 select2-hidden-accessible" id="clientid"
+									name="clientid" style="width: 100%; border-radius: 4px;" tabindex="-1"
+									aria-hidden="true">
+									<option value="0">-
+										<?php _e('ALL'); ?> -
+									</option>
+									<?php foreach ($clients as $client) { echo "<option value='".$client['id']."'>".$client['name']."</option>"; } ?>
+								</select>
+							</div>
 							<?php } ?>
-							<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid" value="<?php echo $liu['clientid']; ?>"> <?php } ?>
-
+							<?php if(!$isAdmin) { ?> <input type="hidden" name="clientid"
+								value="<?php echo $liu['clientid']; ?>">
+							<?php } ?>
+							<div style="margin-bottom: 74px;"></div> <!-- Spacer to match Timesheet height -->
 							<input type="hidden" name="report" value="summary">
 							<input type="hidden" name="route" value="reports/view">
 						</div>
-						<div class="box-footer"><button type="submit" class="btn btn-primary btn-flat"><?php _e('Generate'); ?></button></div>
+						<div class="box-footer"
+							style="background-color: #fafafa; border-top: 1px solid #f4f4f4; padding: 15px 20px; text-align: right;">
+							<button type="submit" class="btn btn-success"
+								style="border-radius: 6px; padding: 8px 20px; font-weight: 500;">
+								<i class="fa fa-file-text-o" style="margin-right: 5px;"></i>
+								<?php _e('Generate'); ?>
+							</button>
+						</div>
 					</form>
 				</div>
 
 
-				<div class="box box-primary">
-					<div class="box-header with-border"><h3 class="box-title"><?php _e('User Summary'); ?></h3></div><!-- /.box-header -->
+				<div class="box box-primary"
+					style="border-top: 3px solid #00c0ef; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 25px;">
+					<div class="box-header with-border"
+						style="background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #f4f4f4;">
+						<h3 class="box-title" style="font-weight: 600; color: #333; font-size: 18px;">
+							<i class="fa fa-users text-info" style="margin-right: 8px;"></i>
+							<?php _e('User Summary'); ?>
+						</h3>
+					</div><!-- /.box-header -->
 					<form role="form" method="get" action="" target="_blank">
-						<div class="box-body">
-							<p><?php _e('Generate a report with a summary of all assets assigned to a user.'); ?></p>
+						<div class="box-body" style="padding: 20px;">
+							<p style="color: #666; margin-bottom: 15px; font-size: 14px;">
+								<?php _e('Generate a report with a summary of all assets assigned to a user.'); ?>
+							</p>
 							<?php if($isAdmin) { ?>
-								<div class="form-group">
-									<label for="userid" class="control-label">User</label>
-									<select class="form-control select2 select2-hidden-accessible" id="userid" name="userid" style="width: 100%;" tabindex="-1" aria-hidden="true">
-										<option value="0">- <?php _e('ALL'); ?> -</option>
-										<?php foreach ($users as $user) { echo "<option value='".$user['id']."'>".$user['name']."</option>"; } ?>
-									</select>
-								</div>
+							<div class="form-group">
+								<label for="userid" class="control-label" style="font-weight: 500; color: #555;">
+									<?php _e('User'); ?>
+								</label>
+								<select class="form-control select2 select2-hidden-accessible" id="userid" name="userid"
+									style="width: 100%; border-radius: 4px;" tabindex="-1" aria-hidden="true">
+									<option value="0">-
+										<?php _e('ALL'); ?> -
+									</option>
+									<?php foreach ($users as $user) { echo "<option value='".$user['id']."'>".$user['name']."</option>"; } ?>
+								</select>
+							</div>
 							<?php } ?>
-							<?php if(!$isAdmin) { ?> <input type="hidden" name="userid" value="<?php echo $liu['id']; ?>"> <?php } ?>
-
+							<?php if(!$isAdmin) { ?> <input type="hidden" name="userid"
+								value="<?php echo $liu['id']; ?>">
+							<?php } ?>
+							<div style="margin-bottom: 74px;"></div> <!-- Spacer to match Timesheet height -->
 							<input type="hidden" name="report" value="userSummary">
 							<input type="hidden" name="route" value="reports/view">
 						</div>
-						<div class="box-footer"><button type="submit" class="btn btn-primary btn-flat"><?php _e('Generate'); ?></button></div>
+						<div class="box-footer"
+							style="background-color: #fafafa; border-top: 1px solid #f4f4f4; padding: 15px 20px; text-align: right;">
+							<button type="submit" class="btn btn-info"
+								style="border-radius: 6px; padding: 8px 20px; font-weight: 500;">
+								<i class="fa fa-file-text-o" style="margin-right: 5px;"></i>
+								<?php _e('Generate'); ?>
+							</button>
+						</div>
 					</form>
 				</div>
 
-				<div class="box box-primary">
-					<div class="box-header with-border"><h3 class="box-title"><?php _e('Other Reports'); ?></h3></div><!-- /.box-header -->
-						<div class="box-body">
-
-							<p><a href="?route=reports/assets" class="btn btn-default btn-flat"><?php _e('Assets (Detailed List)'); ?></a></p>
-							<p><a href="?route=reports/licenses" class="btn btn-default btn-flat"><?php _e('Licenses (Detailed List)'); ?></a></p>
-
-							<p></p>
+				<div class="box box-primary"
+					style="border-top: 3px solid #f39c12; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); overflow: hidden; margin-bottom: 25px;">
+					<div class="box-header with-border"
+						style="background-color: #fff; padding: 15px 20px; border-bottom: 1px solid #f4f4f4;">
+						<h3 class="box-title" style="font-weight: 600; color: #333; font-size: 18px;">
+							<i class="fa fa-cube text-warning" style="margin-right: 8px;"></i>
+							<?php _e('Other Reports'); ?>
+						</h3>
+					</div><!-- /.box-header -->
+					<div class="box-body" style="padding: 20px;">
+						<div class="row">
+							<div class="col-md-6">
+								<a href="?route=reports/assets" class="btn btn-default btn-block"
+									style="border-radius: 6px; padding: 15px; text-align: left; background-color: #f9fafb; border: 1px solid #e5e7eb; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 10px;">
+									<div style="font-weight: 600; color: #374151; font-size: 15px;"><i
+											class="fa fa-desktop text-muted" style="margin-right: 8px;"></i>
+										<?php _e('Assets'); ?>
+									</div>
+									<div style="font-size: 12px; color: #6b7280; margin-top: 4px; padding-left: 22px;">
+										<?php _e('Detailed List'); ?>
+									</div>
+								</a>
+							</div>
+							<div class="col-md-6">
+								<a href="?route=reports/licenses" class="btn btn-default btn-block"
+									style="border-radius: 6px; padding: 15px; text-align: left; background-color: #f9fafb; border: 1px solid #e5e7eb; transition: all 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 10px;">
+									<div style="font-weight: 600; color: #374151; font-size: 15px;"><i
+											class="fa fa-certificate text-muted" style="margin-right: 8px;"></i>
+										<?php _e('Licenses'); ?>
+									</div>
+									<div style="font-size: 12px; color: #6b7280; margin-top: 4px; padding-left: 22px;">
+										<?php _e('Detailed List'); ?>
+									</div>
+								</a>
+							</div>
 						</div>
+					</div>
+
 
 				</div>
-
 			</div>
-		</div>
 
 
 

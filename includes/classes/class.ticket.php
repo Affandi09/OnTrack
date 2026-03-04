@@ -84,9 +84,18 @@ class Ticket extends App
             }
         }
 
+        // Department resolution from location
+        $departmentid = isset($data['departmentid']) ? $data['departmentid'] : 0;
+        if ($departmentid == 0 && $locationid != 0) {
+            $mapped_dept = $database->get("locations", "departmenId", ["id" => $locationid]);
+            if ($mapped_dept) {
+                $departmentid = $mapped_dept;
+            }
+        }
+
         $ticketid = $database->insert("tickets", [
             "ticket" => $random,
-            "departmentid" => isset($data['departmentid']) ? $data['departmentid'] : 0,
+            "departmentid" => $departmentid,
             "branch_id" => $branch_id,
             "submitter_id" => $submitter_id,
             "locationid" => $locationid,
