@@ -734,11 +734,22 @@ function sendEmail($to, $subject, $message, $clientid = "0", $peopleid = "0", $c
 	$mail->CharSet = "UTF-8";
 	if (getConfigValue("email_smtp_enable") == "true") {
 		$mail->isSMTP();
-		$mail->Host = getConfigValue("email_smtp_host");
+		$mail->SMTPDebug = 3;
+		$mail->Debugoutput = function ($str, $level) {
+			file_put_contents(__DIR__ . '/../smtp_debug.log', date('Y-m-d H:i:s') . " [Level $level] $str\n", FILE_APPEND);
+		};
+		if (getConfigValue("email_smtp_port") == "465") {
+			$mail->Host = "ssl://" . getConfigValue("email_smtp_host");
+			// bypass SMTPSecure kalau uda pake ssl://
+			$mail->SMTPSecure = '';
+		} else {
+			$mail->Host = getConfigValue("email_smtp_host");
+			$mail->SMTPSecure = getConfigValue("email_smtp_security");
+		}
+
 		$mail->SMTPAuth = getConfigValue("email_smtp_auth");
 		$mail->Username = getConfigValue("email_smtp_username");
 		$mail->Password = getConfigValue("email_smtp_password");
-		$mail->SMTPSecure = getConfigValue("email_smtp_security");
 		$mail->Port = getConfigValue("email_smtp_port");
 
 		//$mail->SMTPAutoTLS = false;
@@ -758,7 +769,9 @@ function sendEmail($to, $subject, $message, $clientid = "0", $peopleid = "0", $c
 
 	}
 
-	$mail->From = getConfigValue("email_from_address");
+	// Set From directly to SMTP Username to allow sending (avoid Mail From spoofing rejection)
+	$mail->From = getConfigValue("email_smtp_username");
+	$mail->Sender = getConfigValue("email_smtp_username"); // Return-Path
 	$mail->FromName = getConfigValue("email_from_name");
 	$mail->addAddress($to);
 
@@ -825,6 +838,8 @@ function sendFCM($peopleid, $title, $body)
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		curl_setopt($ch, CURLOPT_POSTFIELDS, $fields);
+		curl_setopt($ch, CURLOPT_TIMEOUT, 3); // 3 seconds timeout
+		curl_setopt($ch, CURLOPT_CONNECTTIMEOUT, 3); // 3 seconds connect timeout
 
 		$result = curl_exec($ch);
 

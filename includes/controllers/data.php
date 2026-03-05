@@ -255,9 +255,9 @@ if ($isAdmin) {
 	$activeIssuesCount = $database->count("issues", ["status[!]" => "Done"]);
 	$allIssuesCount = $database->count("issues");
 } else {
-	$arTicketsCount = $database->count("tickets", ["AND" => ["status" => ["Open", "Reopened"], "clientid" => $liu['clientid']]]);
-	$activeTicketsCount = $database->count("tickets", ["AND" => ["status[!]" => "Closed", "clientid" => $liu['clientid']]]);
-	$allTicketsCount = countTableFiltered("tickets", "clientid", $liu['clientid']);
+	$arTicketsCount = $database->count("tickets", ["AND" => ["status" => ["Open", "Reopened"], "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]]]);
+	$activeTicketsCount = $database->count("tickets", ["AND" => ["status[!]" => "Closed", "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]]]);
+	$allTicketsCount = $database->count("tickets", ["OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]]);
 
 	$overdueIssuesCount = $database->count("issues", ["AND" => ["status[!]" => "Done", "duedate[<]" => date("Y-m-d"), "duedate[!]" => "", "clientid" => $liu['clientid']]]);
 	$activeIssuesCount = $database->count("issues", ["AND" => ["status[!]" => "Done", "clientid" => $liu['clientid']]]);
@@ -290,7 +290,7 @@ if ($route == "dashboard") {
 		$categories = getTable("assetcategories");
 
 		$activeIssues = $database->select("issues", "*", ["AND" => ["status[!]" => "Done", "clientid" => $liu['clientid']]]);
-		$openTickets = $database->select("tickets", "*", ["AND" => ["clientid" => $liu['clientid'], "status[!]" => "Closed"], "ORDER" => ["id" => "DESC"]]);
+		$openTickets = $database->select("tickets", "*", ["AND" => ["status[!]" => "Closed", "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
 
 		$recentAssets = $database->select("assets", "*", ["clientid" => $liu['clientid'], "ORDER" => ["id" => "DESC"], "LIMIT" => 5]);
 		$recentLicenses = $database->select("licenses", "*", ["clientid" => $liu['clientid'], "ORDER" => ["id" => "DESC"], "LIMIT" => 5]);
@@ -466,7 +466,7 @@ if ($route == "tickets/ar") {
 	if ($isAdmin) {
 		$tickets = $database->select("tickets", "*", ["status" => ["Open", "Reopened"], "ORDER" => ["id" => "DESC"]]);
 	} else {
-		$tickets = $database->select("tickets", "*", ["AND" => ["status" => ["Open", "Reopened"], "clientid" => $liu['clientid']], "ORDER" => ["id" => "DESC"]]);
+		$tickets = $database->select("tickets", "*", ["AND" => ["status" => ["Open", "Reopened"], "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
 	}
 	$pageTitle = __("Tickets Awaiting Reply");
 }
@@ -475,7 +475,7 @@ if ($route == "tickets/active") {
 	if ($isAdmin) {
 		$tickets = $database->select("tickets", "*", ["status[!]" => "Closed", "ORDER" => ["id" => "DESC"]]);
 	} else {
-		$tickets = $database->select("tickets", "*", ["AND" => ["status[!]" => "Closed", "clientid" => $liu['clientid']], "ORDER" => ["id" => "DESC"]]);
+		$tickets = $database->select("tickets", "*", ["AND" => ["status[!]" => "Closed", "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
 	}
 	$pageTitle = __("Active Tickets");
 }
@@ -484,7 +484,7 @@ if ($route == "tickets/all") {
 	if ($isAdmin) {
 		$tickets = $database->select("tickets", "*", ["ORDER" => ["id" => "DESC"]]);
 	} else {
-		$tickets = $database->select("tickets", "*", ["clientid" => $liu['clientid'], "ORDER" => ["id" => "DESC"]]);
+		$tickets = $database->select("tickets", "*", ["OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']], "ORDER" => ["id" => "DESC"]]);
 	}
 	$pageTitle = __("All Tickets");
 }
@@ -526,7 +526,40 @@ if ($route == "submitticket") {
 	]);
 	$locations_json = json_encode($locations_db);
 
+	$client_mappings = [];
+	foreach ($submitters as $sub) {
+		if ($sub['company_id']) {
+			$comp_name = $database->get("companies", "name", ["id" => $sub['company_id']]);
+			if ($comp_name) {
+				$client_id_val = $database->get("clients", "id", ["name" => $comp_name]);
+				if ($client_id_val) {
+					$client_mappings[] = [
+						"submitter_id" => $sub['id'],
+						"client_id" => $client_id_val
+					];
+				}
+			}
+		}
+	}
+	$clients_json = json_encode($client_mappings);
+
 	$kendalas = ["JARINGAN", "APLIKASI", "MASTER DATA (ITEM/PRICING)", "HARDWARE"];
+}
+
+if ($route == "checkticket") {
+	if (isset($_GET['ticket']) && !empty($_GET['ticket'])) {
+		$ticket_code = $_GET['ticket'];
+		$ticket = $database->get("tickets", "*", ["ticket" => $ticket_code]);
+		if ($ticket) {
+			$replies = getTableFiltered("tickets_replies", "ticketid", $ticket['id'], "", "", "*", "id", "DESC");
+		} else {
+			$ticket = false;
+			$error_message = __("Ticket with code") . " '" . htmlentities($ticket_code) . "' " . __("not found.");
+		}
+	} else {
+		$ticket = false;
+		$error_message = __("No ticket code provided.");
+	}
 }
 
 
@@ -670,6 +703,27 @@ if ($route == "reports") {
 	$admins = getTableFiltered("people", "type", "admin");
 	$users = getTableFiltered("people", "type", "user");
 	$pageTitle = __("Reports");
+}
+
+if ($route == "reports/checkEmpty") {
+	if ($_GET['report'] == "ticketsReport") {
+		$startdate = dateDb($_GET['startDate']) . " 00:00:00";
+		$enddate = dateDb($_GET['endDate']) . " 23:59:59";
+		if ($_GET['clientid'] == "0") {
+			$count = $database->count("tickets", [
+				"timestamp[<>]" => [$startdate, $enddate]
+			]);
+		} else {
+			$count = $database->count("tickets", [
+				"AND" => [
+					"timestamp[<>]" => [$startdate, $enddate],
+					"clientid" => $_GET['clientid']
+				]
+			]);
+		}
+		echo json_encode(['count' => $count]);
+		exit;
+	}
 }
 
 if ($route == "reports/view") {

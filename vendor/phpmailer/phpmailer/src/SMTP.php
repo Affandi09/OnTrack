@@ -137,7 +137,7 @@ class SMTP
      *
      * @var int
      */
-    public $Timeout = 300;
+    public $Timeout = 10;
 
     /**
      * How long to wait for commands to complete, in seconds.
@@ -145,7 +145,7 @@ class SMTP
      *
      * @var int
      */
-    public $Timelimit = 300;
+    public $Timelimit = 10;
 
     /**
      * Patterns to extract an SMTP transaction id from reply to a DATA command.
@@ -261,17 +261,17 @@ class SMTP
                 //Normalize line breaks
                 $str = preg_replace('/\r\n|\r/ms', "\n", $str);
                 echo gmdate('Y-m-d H:i:s'),
-                "\t",
+                    "\t",
                     //Trim trailing space
-                trim(
-                //Indent for readability, except for trailing break
-                    str_replace(
-                        "\n",
-                        "\n                   \t                  ",
-                        trim($str)
-                    )
-                ),
-                "\n";
+                    trim(
+                        //Indent for readability, except for trailing break
+                        str_replace(
+                            "\n",
+                            "\n                   \t                  ",
+                            trim($str)
+                        )
+                    ),
+                    "\n";
         }
     }
 
@@ -487,11 +487,12 @@ class SMTP
                     return false;
                 }
                 // Send encoded username and password
-                if (!$this->sendCommand(
-                    'User & Password',
-                    base64_encode("\0" . $username . "\0" . $password),
-                    235
-                )
+                if (
+                    !$this->sendCommand(
+                        'User & Password',
+                        base64_encode("\0" . $username . "\0" . $password),
+                        235
+                    )
                 ) {
                     return false;
                 }
@@ -1013,8 +1014,10 @@ class SMTP
     {
         //If SMTP transcripts are left enabled, or debug output is posted online
         //it can leak credentials, so hide credentials in all but lowest level
-        if (self::DEBUG_LOWLEVEL > $this->do_debug and
-            in_array($command, ['User & Password', 'Username', 'Password'], true)) {
+        if (
+            self::DEBUG_LOWLEVEL > $this->do_debug and
+            in_array($command, ['User & Password', 'Username', 'Password'], true)
+        ) {
             $this->edebug('CLIENT -> SERVER: <credentials hidden>', self::DEBUG_CLIENT);
         } else {
             $this->edebug('CLIENT -> SERVER: ' . $data, self::DEBUG_CLIENT);

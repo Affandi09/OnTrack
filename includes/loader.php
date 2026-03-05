@@ -11,11 +11,11 @@ require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . '
 ###      LOAD CONFIG FILE      ###
 ##################################
 
-if(file_exists($scriptpath . DIRECTORY_SEPARATOR . "config.php")) {
+if (file_exists($scriptpath . DIRECTORY_SEPARATOR . "config.php")) {
     require($scriptpath . DIRECTORY_SEPARATOR . 'config.php');
-    if(isset($DBconfig)) $config = $DBconfig;
-    }
-else { // redirect to install if config.php file does not exist
+    if (isset($DBconfig))
+        $config = $DBconfig;
+} else { // redirect to install if config.php file does not exist
     header("Location:install/index.php");
     exit;
 }
@@ -47,26 +47,36 @@ $datetime = date("Y-m-d H:i:s");
 $date = date("Y-m-d");
 
 ### GET PAGE ROUTE (DEFAULTS TO DASHBOARD IF NOT SET) ###
-if (empty($_GET['route'])) $route = "dashboard"; else $route = $_GET['route'];
+if (empty($_GET['route']))
+    $route = "dashboard";
+else
+    $route = $_GET['route'];
 
 ### GET PAGE SECTION (IF ISSET) ###
-if (isset($_GET['section'])) $section = $_GET['section']; else $section = "";
+if (isset($_GET['section']))
+    $section = $_GET['section'];
+else
+    $section = "";
 
 ### LOAD STATUS MESSAGE FOR DISPLAY AND CLEAR IT ###
 if (!empty($_SESSION['statuscode'])) {
     $statuscode = $_SESSION['statuscode'];
-    $status = array(); $statusmessage = $database->get("statuscodes", "*", ["code" => $statuscode]);
+    $status = array();
+    $statusmessage = $database->get("statuscodes", "*", ["code" => $statuscode]);
     clearStatus();
-    }
+}
 
 ### CHECK IF USER IS SIGNED IN, EXCEPT ON SIGNIN, RECOVER PASSWORD OR SUBMIT TICKET PAGE ###
-if ($route != "signin" && $route != "forgot" && $route != "submitticket") isSignedIn();
+if ($route != "signin" && $route != "forgot" && $route != "submitticket" && $route != "checkticket")
+    isSignedIn();
 
 ### INITIALIZE LOGGED IN USER (LIU) ARRAY & PERMISSIONS ###
 if ($route != "signin" && $route != "forgot") {
-    $liu = $database->get("people", "*", ["sessionid" => session_id() ]);
-    $perms = unserialize(getSingleValue("roles","perms",$liu['roleid']));
-    $isAdmin = false; if($liu['type'] == "admin") $isAdmin = true;
+    $liu = $database->get("people", "*", ["sessionid" => session_id()]);
+    $perms = unserialize(getSingleValue("roles", "perms", $liu['roleid']));
+    $isAdmin = false;
+    if ($liu['type'] == "admin")
+        $isAdmin = true;
 }
 
 
@@ -79,9 +89,10 @@ if ($route != "signin" && $route != "forgot") {
 $lang = getConfigValue("default_lang");
 
 // overwrite default lang if liu has one defined
-if(isset($liu)) {
-    if($liu['lang'] != "") $lang = $liu['lang'];
-    }
+if (isset($liu)) {
+    if ($liu['lang'] != "")
+        $lang = $liu['lang'];
+}
 
 // define language file path
 $langfile = $scriptpath . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . $lang . ".mo";
@@ -90,13 +101,13 @@ $langfile = $scriptpath . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . $
 $orlangfile = $scriptpath . DIRECTORY_SEPARATOR . "lang" . DIRECTORY_SEPARATOR . "override" . DIRECTORY_SEPARATOR . $lang . ".mo";
 
 // load overriden language file (if exists)
-if(file_exists($orlangfile)) {
+if (file_exists($orlangfile)) {
     $streamer = new FileReader($orlangfile);
     $t = new gettext_reader($streamer);
 }
 // if overridden lang file does not exist, try to load normal language file (if exists)
 else {
-    if(file_exists($langfile)) {
+    if (file_exists($langfile)) {
         $streamer = new FileReader($langfile);
         $t = new gettext_reader($streamer);
     }
@@ -111,13 +122,16 @@ else {
 require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'general.php');
 
 // modals controller (loads only if a modal is requested)
-if(isset($_GET['modal'])) require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'modals.php');
+if (isset($_GET['modal']))
+    require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'modals.php');
 
 // quick actions controller (loads only if a quick action is requested)
-if(isset($_GET['qa'])) require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'quickactions.php');
+if (isset($_GET['qa']))
+    require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'quickactions.php');
 
 // actions controller (loads only if an action is requested)
-if(isset($_POST['action'])) require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'actions.php');
+if (isset($_POST['action']))
+    require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'actions.php');
 
 // data controller
 require($scriptpath . DIRECTORY_SEPARATOR . 'includes' . DIRECTORY_SEPARATOR . 'controllers' . DIRECTORY_SEPARATOR . 'data.php');
