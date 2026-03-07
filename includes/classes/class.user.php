@@ -23,19 +23,20 @@ class User extends App
             "title" => $data['title'],
             "mobile" => $data['mobile'],
             "password" => $password,
-            "theme" => $data['theme'],
-            "sidebar" => $data['sidebar'],
-            "layout" => $data['layout'],
-            "notes" => $data['notes'],
+            "theme" => isset($data['theme']) ? $data['theme'] : "skin-blue",
+            "sidebar" => isset($data['sidebar']) ? $data['sidebar'] : "opened",
+            "layout" => isset($data['layout']) ? $data['layout'] : "",
+            "notes" => isset($data['notes']) ? $data['notes'] : "",
             "signature" => "",
             "sessionid" => "",
             "resetkey" => "",
             "autorefresh" => 0,
-            "lang" => $data['lang'],
+            "lang" => isset($data['lang']) ? $data['lang'] : "en",
             "ticketsnotification" => 1,
-
+            "avatar" => "",
         ]);
         if ($lastid == "0") {
+            logSystem("Failed to add user. MySQL Error: " . json_encode($database->error()));
             return "11";
         } else {
             if (isset($data['notification'])) {
@@ -61,11 +62,11 @@ class User extends App
                 "ldap_user" => $data['ldap_user'],
                 "title" => $data['title'],
                 "mobile" => $data['mobile'],
-                "theme" => $data['theme'],
-                "sidebar" => $data['sidebar'],
-                "layout" => $data['layout'],
-                "notes" => $data['notes'],
-                "lang" => $data['lang'],
+                "theme" => isset($data['theme']) ? $data['theme'] : "skin-blue",
+                "sidebar" => isset($data['sidebar']) ? $data['sidebar'] : "opened",
+                "layout" => isset($data['layout']) ? $data['layout'] : "",
+                "notes" => isset($data['notes']) ? $data['notes'] : "",
+                "lang" => isset($data['lang']) ? $data['lang'] : "en",
 
             ], ["id" => $data['id']]);
             logSystem("User Account Edited - ID: " . $data['id']);
@@ -81,11 +82,11 @@ class User extends App
                 "title" => $data['title'],
                 "mobile" => $data['mobile'],
                 "password" => $password,
-                "theme" => $data['theme'],
-                "sidebar" => $data['sidebar'],
-                "layout" => $data['layout'],
-                "notes" => $data['notes'],
-                "lang" => $data['lang'],
+                "theme" => isset($data['theme']) ? $data['theme'] : "skin-blue",
+                "sidebar" => isset($data['sidebar']) ? $data['sidebar'] : "opened",
+                "layout" => isset($data['layout']) ? $data['layout'] : "",
+                "notes" => isset($data['notes']) ? $data['notes'] : "",
+                "lang" => isset($data['lang']) ? $data['lang'] : "en",
 
             ], ["id" => $data['id']]);
             logSystem("User Account Edited - ID: " . $data['id']);

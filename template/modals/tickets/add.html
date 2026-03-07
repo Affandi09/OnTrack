@@ -84,11 +84,10 @@
                             <?php _e('None'); ?>
                         </option>
                         <?php foreach ($clients as $client) { ?>
-                            <option value='<?php echo $client[' id']; ?>'
-                                <?php if (isset($_GET['clientid'])) {
-                                    if ($_GET['clientid'] == $client['id'])
-                                        echo "selected";
-                                } ?>>
+                            <option value='<?php echo $client[' id']; ?>' <?php if (isset($_GET['clientid'])) {
+                                   if ($_GET['clientid'] == $client['id'])
+                                       echo "selected";
+                               } ?>>
                                 <?php echo $client['name']; ?>
                             </option>
                         <?php } ?>
@@ -112,11 +111,10 @@
                             <?php _e('Nobody'); ?>
                         </option>
                         <?php foreach ($admins as $admin) { ?>
-                            <option value='<?php echo $admin[' id']; ?>'
-                                <?php if (isset($liu['id'])) {
-                                    if ($liu['id'] == $admin['id'])
-                                        echo "selected";
-                                } ?>>
+                            <option value='<?php echo $admin['id']; ?>' <?php if (isset($liu['id'])) {
+                                   if ($liu['id'] == $admin['id'])
+                                       echo "selected";
+                               } ?>>
                                 <?php echo $admin['name']; ?>
                             </option>
                         <?php } ?>
@@ -306,32 +304,32 @@
     });
 
     <?php if (!$isAdmin) { ?>
-            clientid = <?php echo isset($liu['clientid']) ? intval($liu['clientid']) : 0; ?>;
+        clientid = <?php echo isset($liu['clientid']) ? intval($liu['clientid']) : 0; ?>;
     <?php } ?>
 
-        $('.assetsSelect').select2({
-            ajax: {
-                url: "index.php",
-                dataType: 'json',
-                data: function (params) {
-                    return {
-                        q: params.term, // search term
-                        qa: 'assetsSelect',
-                        filterid: clientid
-                    };
-                },
-                processResults: function (data, params) {
-                    return {
-                        results: $.map(data, function (obj) {
-                            return { id: obj.id, text: obj.text, text: obj.text };
-                        })
-                    };
-                },
-                //cache: true,
+    $('.assetsSelect').select2({
+        ajax: {
+            url: "index.php",
+            dataType: 'json',
+            data: function (params) {
+                return {
+                    q: params.term, // search term
+                    qa: 'assetsSelect',
+                    filterid: clientid
+                };
             },
-            minimumInputLength: 0,
-            placeholder: "<?php _e('Please Select'); ?>",
-        });
+            processResults: function (data, params) {
+                return {
+                    results: $.map(data, function (obj) {
+                        return { id: obj.id, text: obj.text, text: obj.text };
+                    })
+                };
+            },
+            //cache: true,
+        },
+        minimumInputLength: 0,
+        placeholder: "<?php _e('Please Select'); ?>",
+    });
 
     $('.projectsSelect').select2({
         ajax: {

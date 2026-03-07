@@ -725,7 +725,7 @@ function logSMS($clientid, $peopleid, $mobile, $sms) //add to sms log
 // ----------------------------------------------------------------------------------------------
 // COMMUNICATIONS FUNCTIONS
 
-function sendEmail($to, $subject, $message, $clientid = "0", $peopleid = "0", $ccs = array(), $attachments = array()) //send email
+function sendEmailNow($to, $subject, $message, $clientid = "0", $peopleid = "0", $ccs = array(), $attachments = array()) //send email immediately
 {
 	global $database;
 	global $scriptpath;
@@ -1029,5 +1029,21 @@ function counTicketsByDepartment($departmentid, $startdate, $enddate, $clientid 
 }
 
 
+
+function sendEmail($to, $subject, $message, $clientid = "0", $peopleid = "0", $ccs = array(), $attachments = array()) //queue email
+{
+	global $database;
+	$database->insert("email_queue", [
+		"to_address" => $to,
+		"subject" => $subject,
+		"message" => $message,
+		"clientid" => $clientid,
+		"peopleid" => $peopleid,
+		"ccs" => serialize($ccs),
+		"attachments" => serialize($attachments),
+		"status" => "Pending"
+	]);
+	return 1; //success
+}
 
 ?>

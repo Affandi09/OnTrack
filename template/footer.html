@@ -74,76 +74,76 @@
 			"stateSave": true,
 			"fixedHeader": true,
 			"oLanguage": {
-			"sSearch": "<i class='fa fa-search text-gray dTsearch'></i>",
-			"sEmptyTable": "<?php _e('No entries to show'); ?>",
-			"sZeroRecords": "<?php _e('Nothing found'); ?>",
-			"sInfo": "<?php _e('Showing'); ?> _START_ <?php _e('to'); ?> _END_ <?php _e('of'); ?> _TOTAL_ <?php _e('entries'); ?>",
-			"sInfoEmpty": "",
-			"oPaginate": {
-				"sNext": "<?php _e('Next'); ?>",
-				"sPrevious": "<?php _e('Previous'); ?>",
-				"sFirst": "<?php _e('First Page'); ?>",
-				"sLast": "<?php _e('Last Page'); ?>"
-			}
-		},
+				"sSearch": "<i class='fa fa-search text-gray dTsearch'></i>",
+				"sEmptyTable": "<?php _e('No entries to show'); ?>",
+				"sZeroRecords": "<?php _e('Nothing found'); ?>",
+				"sInfo": "<?php _e('Showing'); ?> _START_ <?php _e('to'); ?> _END_ <?php _e('of'); ?> _TOTAL_ <?php _e('entries'); ?>",
+				"sInfoEmpty": "",
+				"oPaginate": {
+					"sNext": "<?php _e('Next'); ?>",
+					"sPrevious": "<?php _e('Previous'); ?>",
+					"sFirst": "<?php _e('First Page'); ?>",
+					"sLast": "<?php _e('Last Page'); ?>"
+				}
+			},
 			"columnDefs": [{ "orderable": false, "targets": -1 }]
 		}
-	);
-	$("#dataTablesFullNoOrder, #dataTablesFullNoOrder2").dataTable({
-		"order": [],
-		"pageLength": <?php echo getConfigValue("table_records"); ?>,
-		"dom": '<"top"f>rt<"bottom"><"row dt-margin"<"col-md-6"i><"col-md-6"p><"col-md-12"B>><"clear">',
-		"buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
-		"stateSave": true,
-		"fixedHeader": true,
-		"oLanguage": {
-		"sSearch": "<i class='fa fa-search text-gray dTsearch'></i>",
-		"sEmptyTable": "<?php _e('No entries to show'); ?>",
-		"sZeroRecords": "<?php _e('Nothing found'); ?>",
-		"sInfo": "<?php _e('Showing'); ?> _START_ <?php _e('to'); ?> _END_ <?php _e('of'); ?> _TOTAL_ <?php _e('entries'); ?>",
-		"sInfoEmpty": "",
-		"oPaginate": {
-			"sNext": "<?php _e('Next'); ?>",
-			"sPrevious": "<?php _e('Previous'); ?>",
-			"sFirst": "<?php _e('First Page'); ?>",
-			"sLast": "<?php _e('Last Page'); ?>"
+		);
+		$("#dataTablesFullNoOrder, #dataTablesFullNoOrder2").dataTable({
+			"order": [],
+			"pageLength": <?php echo getConfigValue("table_records"); ?>,
+			"dom": '<"top"f>rt<"bottom"><"row dt-margin"<"col-md-6"i><"col-md-6"p><"col-md-12"B>><"clear">',
+			"buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
+			"stateSave": true,
+			"fixedHeader": true,
+			"oLanguage": {
+				"sSearch": "<i class='fa fa-search text-gray dTsearch'></i>",
+				"sEmptyTable": "<?php _e('No entries to show'); ?>",
+				"sZeroRecords": "<?php _e('Nothing found'); ?>",
+				"sInfo": "<?php _e('Showing'); ?> _START_ <?php _e('to'); ?> _END_ <?php _e('of'); ?> _TOTAL_ <?php _e('entries'); ?>",
+				"sInfoEmpty": "",
+				"oPaginate": {
+					"sNext": "<?php _e('Next'); ?>",
+					"sPrevious": "<?php _e('Previous'); ?>",
+					"sFirst": "<?php _e('First Page'); ?>",
+					"sLast": "<?php _e('Last Page'); ?>"
+				}
+			},
+			"columnDefs": [{ "orderable": false, "targets": -1 }]
 		}
-	},
-		"columnDefs": [{ "orderable": false, "targets": -1 }]
+		);
+		$("#dataTablesFullDesc, #dataTablesFullDesc2").dataTable({
+			"order": [[0, "desc"]],
+			"pageLength": <?php echo getConfigValue("table_records"); ?>,
+			"dom": '<"top"f>rt<"bottom"><"row dt-margin"<"col-md-6"i><"col-md-6"p><"col-md-12"B>><"clear">',
+			"buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
+			"stateSave": true,
+			"fixedHeader": true,
+			"oLanguage": {
+				"sSearch": "<i class='fa fa-search text-gray dTsearch'></i>",
+				"sEmptyTable": "<?php _e('No entries to show'); ?>",
+				"sZeroRecords": "<?php _e('Nothing found'); ?>",
+				"sInfo": "<?php _e('Showing'); ?> _START_ <?php _e('to'); ?> _END_ <?php _e('of'); ?> _TOTAL_ <?php _e('entries'); ?>",
+				"sInfoEmpty": "",
+				"oPaginate": {
+					"sNext": "<?php _e('Next'); ?>",
+					"sPrevious": "<?php _e('Previous'); ?>",
+					"sFirst": "<?php _e('First Page'); ?>",
+					"sLast": "<?php _e('Last Page'); ?>"
+				}
+			},
+			"columnDefs": [{ "orderable": false, "targets": -1 }]
 		}
-	);
-	$("#dataTablesFullDesc, #dataTablesFullDesc2").dataTable({
-		"order": [[0, "desc"]],
-		"pageLength": <?php echo getConfigValue("table_records"); ?>,
-		"dom": '<"top"f>rt<"bottom"><"row dt-margin"<"col-md-6"i><"col-md-6"p><"col-md-12"B>><"clear">',
-		"buttons": ['copy', 'csv', 'excel', 'pdf', 'print'],
-		"stateSave": true,
-		"fixedHeader": true,
-		"oLanguage": {
-		"sSearch": "<i class='fa fa-search text-gray dTsearch'></i>",
-		"sEmptyTable": "<?php _e('No entries to show'); ?>",
-		"sZeroRecords": "<?php _e('Nothing found'); ?>",
-		"sInfo": "<?php _e('Showing'); ?> _START_ <?php _e('to'); ?> _END_ <?php _e('of'); ?> _TOTAL_ <?php _e('entries'); ?>",
-		"sInfoEmpty": "",
-		"oPaginate": {
-			"sNext": "<?php _e('Next'); ?>",
-			"sPrevious": "<?php _e('Previous'); ?>",
-			"sFirst": "<?php _e('First Page'); ?>",
-			"sLast": "<?php _e('Last Page'); ?>"
-		}
-	},
-		"columnDefs": [{ "orderable": false, "targets": -1 }]
-		}
-	);
+		);
 
 
 
-	$('#purchase_date, #startDate, #endDate, #date, #pat_tested, #removal_date').datepicker({
-		format: '<?php echo jsFormat(); ?>',
-		clearBtn: 'true',
-		weekStart: '<?php echo getConfigValue("week_start"); ?>',
-		autoclose: true
-	});
+		$('#purchase_date, #startDate, #endDate, #date, #pat_tested, #removal_date').datepicker({
+			format: '<?php echo jsFormat(); ?>',
+			clearBtn: 'true',
+			weekStart: '<?php echo getConfigValue("week_start"); ?>',
+			autoclose: true
+		});
 
 		// $(".donut").peity("donut");
 
@@ -153,6 +153,16 @@
 				echo "startAutorefresh(" . $liu['autorefresh'] . ");";
 		}
 		?>
+
+		// BACKGROUND EMAIL QUEUE WORKER (UI CRON)
+		// Triggers every 60 seconds secretly in the background
+		setInterval(function () {
+			$.ajax({
+				url: 'crons/email_queue.php',
+				type: 'GET',
+				cache: false
+			});
+		}, 60000);
 
 	});
 </script>

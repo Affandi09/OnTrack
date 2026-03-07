@@ -9,6 +9,8 @@ class Ticket extends App
     public static function add($data)
     {
         global $database;
+        file_put_contents("/tmp/ticket_debug_$data[ticket].txt", "RECEIVED POST DATA AGAIN:\n" . print_r($data, true));
+
         if (empty($data['ccs']))
             $ccs = "";
         else
