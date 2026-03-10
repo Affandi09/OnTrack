@@ -4,6 +4,22 @@
 ###     GET DATA FOR PAGES     ###
 ##################################
 
+$forum = new Forum();
+
+// FORUM
+if ($route == "forum/manage") {
+	isAuthorized("viewTickets"); // Use tickets auth as a proxy for staff access if there is no explicit forum auth
+	$topics = $forum->getTopics();
+	$pageTitle = __("IT Forum");
+}
+
+if ($route == "forum/view") {
+	isAuthorized("viewTickets");
+	$topic = $forum->getTopic($_GET['id']);
+	$replies = $forum->getReplies($_GET['id']);
+	$pageTitle = $topic['title'];
+}
+
 // PDF
 
 if ($route == "pdf") {
@@ -255,9 +271,9 @@ if ($isAdmin) {
 	$activeIssuesCount = $database->count("issues", ["status[!]" => "Done"]);
 	$allIssuesCount = $database->count("issues");
 } else {
-	$arTicketsCount = $database->count("tickets", ["AND" => ["status" => ["Open", "Reopened"], "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]]]);
-	$activeTicketsCount = $database->count("tickets", ["AND" => ["status[!]" => "Closed", "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]]]);
-	$allTicketsCount = $database->count("tickets", ["OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]]);
+	$arTicketsCount = $database->count("tickets", ["AND" => ["status" => ["Open", "Reopened"], "OR" => ["userid" => $liu['id'], "email" => $liu['email']]]]);
+	$activeTicketsCount = $database->count("tickets", ["AND" => ["status[!]" => "Closed", "OR" => ["userid" => $liu['id'], "email" => $liu['email']]]]);
+	$allTicketsCount = $database->count("tickets", ["OR" => ["userid" => $liu['id'], "email" => $liu['email']]]);
 
 	$overdueIssuesCount = $database->count("issues", ["AND" => ["status[!]" => "Done", "duedate[<]" => date("Y-m-d"), "duedate[!]" => "", "clientid" => $liu['clientid']]]);
 	$activeIssuesCount = $database->count("issues", ["AND" => ["status[!]" => "Done", "clientid" => $liu['clientid']]]);
@@ -290,7 +306,7 @@ if ($route == "dashboard") {
 		$categories = getTable("assetcategories");
 
 		$activeIssues = $database->select("issues", "*", ["AND" => ["status[!]" => "Done", "clientid" => $liu['clientid']]]);
-		$openTickets = $database->select("tickets", "*", ["AND" => ["status[!]" => "Closed", "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
+		$openTickets = $database->select("tickets", "*", ["AND" => ["status[!]" => "Closed", "OR" => ["userid" => $liu['id'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
 
 		$recentAssets = $database->select("assets", "*", ["clientid" => $liu['clientid'], "ORDER" => ["id" => "DESC"], "LIMIT" => 5]);
 		$recentLicenses = $database->select("licenses", "*", ["clientid" => $liu['clientid'], "ORDER" => ["id" => "DESC"], "LIMIT" => 5]);
@@ -466,7 +482,7 @@ if ($route == "tickets/ar") {
 	if ($isAdmin) {
 		$tickets = $database->select("tickets", "*", ["status" => ["Open", "Reopened"], "ORDER" => ["id" => "DESC"]]);
 	} else {
-		$tickets = $database->select("tickets", "*", ["AND" => ["status" => ["Open", "Reopened"], "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
+		$tickets = $database->select("tickets", "*", ["AND" => ["status" => ["Open", "Reopened"], "OR" => ["userid" => $liu['id'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
 	}
 	$pageTitle = __("Tickets Awaiting Reply");
 }
@@ -475,7 +491,7 @@ if ($route == "tickets/active") {
 	if ($isAdmin) {
 		$tickets = $database->select("tickets", "*", ["status[!]" => "Closed", "ORDER" => ["id" => "DESC"]]);
 	} else {
-		$tickets = $database->select("tickets", "*", ["AND" => ["status[!]" => "Closed", "OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
+		$tickets = $database->select("tickets", "*", ["AND" => ["status[!]" => "Closed", "OR" => ["userid" => $liu['id'], "email" => $liu['email']]], "ORDER" => ["id" => "DESC"]]);
 	}
 	$pageTitle = __("Active Tickets");
 }
@@ -484,7 +500,7 @@ if ($route == "tickets/all") {
 	if ($isAdmin) {
 		$tickets = $database->select("tickets", "*", ["ORDER" => ["id" => "DESC"]]);
 	} else {
-		$tickets = $database->select("tickets", "*", ["OR" => ["clientid" => $liu['clientid'], "email" => $liu['email']], "ORDER" => ["id" => "DESC"]]);
+		$tickets = $database->select("tickets", "*", ["OR" => ["userid" => $liu['id'], "email" => $liu['email']], "ORDER" => ["id" => "DESC"]]);
 	}
 	$pageTitle = __("All Tickets");
 }

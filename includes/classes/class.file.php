@@ -45,16 +45,18 @@ class File extends App
 			if ($status == 9500) {
 				if (move_uploaded_file($files["file"]["tmp_name"][$i], $targetfile)) {
 					$database->insert("files", [
-						"clientid" => $data['clientid'],
-						"projectid" => $data['projectid'],
-						"assetid" => $data['assetid'],
-						"ticketreplyid" => $data['ticketreplyid'],
+						"clientid" => isset($data['clientid']) ? $data['clientid'] : 0,
+						"projectid" => isset($data['projectid']) ? $data['projectid'] : 0,
+						"assetid" => isset($data['assetid']) ? $data['assetid'] : 0,
+						"ticketreplyid" => isset($data['ticketreplyid']) ? $data['ticketreplyid'] : 0,
+						"forumtopicid" => isset($data['forumtopicid']) ? $data['forumtopicid'] : 0,
+						"forumreplyid" => isset($data['forumreplyid']) ? $data['forumreplyid'] : 0,
 						"name" => $data['name'],
 						"file" => $filename
 					]);
-					$status == 9500;
+					$status = 9500;
 				} else
-					$status == 9502;
+					$status = 9502;
 			}
 
 			if ($emptyfilename) {
@@ -101,6 +103,30 @@ class File extends App
 		}
 
 
+	}
+
+	public static function delete_forum_topic_files($topicid)
+	{
+		global $database;
+
+		// delete root topic files
+		$files = $database->select("files", "*", ["forumtopicid" => $topicid]);
+		if (!empty($files)) {
+			foreach ($files as $file) {
+				self::delete($file['id']);
+			}
+		}
+
+		// delete replies
+		$replies = $database->select("forum_replies", "*", ["topic_id" => $topicid]);
+		foreach ($replies as $reply) {
+			$reply_files = $database->select("files", "*", ["forumreplyid" => $reply['id']]);
+			if (!empty($reply_files)) {
+				foreach ($reply_files as $file) {
+					self::delete($file['id']);
+				}
+			}
+		}
 	}
 
 	public static function icon($file)
