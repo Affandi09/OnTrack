@@ -1,0 +1,26 @@
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+        <?php _e('Close Topic'); ?>
+    </h4>
+</div>
+<div class="modal-body">
+    <p>
+        <?php _e('Are you sure you want to close this topic? No further replies will be allowed.'); ?>
+    </p>
+    <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
+    <input type="hidden" name="status" value="1">
+    <input type="hidden" name="route" value="<?php echo $_GET['reroute']; ?>">
+    <input type="hidden" name="routeid" value="<?php echo $_GET['routeid']; ?>">
+    <input type="hidden" name="section" value="<?php echo $_GET['section']; ?>">
+    <input type="hidden" name="action" value="toggleCloseTopic">
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i>
+        <?php _e('Cancel'); ?>
+    </button>
+    <button type="submit" class="btn btn-warning"><i class="fa fa-lock"></i>
+        <?php _e('Close Topic'); ?>
+    </button>
+</div>
