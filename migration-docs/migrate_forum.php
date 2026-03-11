@@ -1,5 +1,9 @@
 <?php
-$scriptpath = dirname(__DIR__);
+if (file_exists(__DIR__ . '/includes/loader.php')) {
+  $scriptpath = __DIR__;
+} else {
+  $scriptpath = dirname(__DIR__);
+}
 require($scriptpath . '/includes/loader.php');
 
 $sql1 = "CREATE TABLE IF NOT EXISTS `forum_topics` (
@@ -29,23 +33,23 @@ $sql3 = "ALTER TABLE `files`
   ADD COLUMN IF NOT EXISTS `forumreplyid` int(11) NOT NULL DEFAULT '0' AFTER `forumtopicid`;";
 
 try {
-    $database->query($sql1);
-    echo "Table forum_topics created successfully.\n";
-    $database->query($sql2);
-    echo "Table forum_replies created successfully.\n";
+  $database->query($sql1);
+  echo "Table forum_topics created successfully.\n";
+  $database->query($sql2);
+  echo "Table forum_replies created successfully.\n";
 
-    // MariaDB might not support 'IF NOT EXISTS' for columns directly in all versions, 
-    // but applying it safely via ignoring errors if it already exists.
-    try {
-        $database->query($sql3);
-        echo "Table files altered successfully (forumtopicid, forumreplyid added).\n";
-    } catch (Exception $e) {
-        // If the columns already exist, this might throw an error we can ignore safely for idempotency
-        echo "Note: " . $e->getMessage() . " (Columns might already exist)\n";
-    }
+  // MariaDB might not support 'IF NOT EXISTS' for columns directly in all versions, 
+  // but applying it safely via ignoring errors if it already exists.
+  try {
+    $database->query($sql3);
+    echo "Table files altered successfully (forumtopicid, forumreplyid added).\n";
+  } catch (Exception $e) {
+    // If the columns already exist, this might throw an error we can ignore safely for idempotency
+    echo "Note: " . $e->getMessage() . " (Columns might already exist)\n";
+  }
 
 
 } catch (Exception $e) {
-    echo "Error creating tables: " . $e->getMessage() . "\n";
+  echo "Error creating tables: " . $e->getMessage() . "\n";
 }
 ?>
