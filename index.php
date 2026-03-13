@@ -55,7 +55,7 @@ if (isset($_GET['modal'])) {
 if (!isset($_GET['modal']) && !isset($_GET['qa'])) {
 
     // exclude header and footer for login and forgot password page
-    if ($route == "signin" || $route == "forgot" || $route == "submitticket" || $route == "checkticket") {
+    if ($route == "signin" || $route == "forgot" || $route == "submitticket" || $route == "checkticket" || $route == "surveyticket") {
         require($scriptpath . DIRECTORY_SEPARATOR . 'template' . DIRECTORY_SEPARATOR . $route . '.html');
     } elseif ($route == "pdf" || $route == "system/import/assetsSample" || $route == "system/import/licensesSample") {
         // do nothing if pdf

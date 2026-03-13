@@ -578,6 +578,21 @@ if ($route == "checkticket") {
 	}
 }
 
+if ($route == "surveyticket") {
+	if (isset($_GET['id']) && !empty($_GET['id'])) {
+		$ticket_code = $_GET['id'];
+		$ticket = $database->get("tickets", "*", ["ticket" => $ticket_code]);
+		if (!$ticket) {
+			$ticket = false;
+			$error_message = __("Ticket with code") . " '" . htmlentities($ticket_code) . "' " . __("not found.");
+		}
+	} else {
+		$ticket = false;
+		$error_message = __("No ticket code provided.");
+	}
+	$department = getTable("tickets_departments");
+}
+
 
 // ISSUES
 if ($route == "issues/active") {
