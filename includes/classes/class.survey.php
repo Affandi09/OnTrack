@@ -35,4 +35,42 @@ class Survey extends App
             return "10"; // Success status code
         }
     }
+
+    public static function exists($ticket_code)
+    {
+        global $database;
+        
+        $ticket = $database->get("tickets", ["id"], ["ticket" => $ticket_code]);
+        if (!$ticket) return false;
+
+        $exists = $database->has("satisfaction_surveys", ["ticket_id" => $ticket['id']]);
+        return $exists;
+    }
+
+    public static function getAll()
+    {
+        global $database;
+        
+        $surveys = $database->select("satisfaction_surveys", [
+            "[>]tickets" => ["ticket_id" => "id"],
+            "[>]tickets_departments" => ["department_id" => "id"]
+        ], [
+            "satisfaction_surveys.id",
+            "satisfaction_surveys.name",
+            "satisfaction_surveys.email",
+            "satisfaction_surveys.q1",
+            "satisfaction_surveys.q2",
+            "satisfaction_surveys.q3",
+            "satisfaction_surveys.q4",
+            "satisfaction_surveys.q5",
+            "satisfaction_surveys.timestamp",
+            "tickets.id(ticket_id)",
+            "tickets.ticket(ticket_code)",
+            "tickets_departments.name(department_name)"
+        ], [
+            "ORDER" => ["satisfaction_surveys.timestamp" => "DESC"]
+        ]);
+
+        return $surveys;
+    }
 }

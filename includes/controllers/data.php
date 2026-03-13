@@ -568,6 +568,7 @@ if ($route == "checkticket") {
 		$ticket = $database->get("tickets", "*", ["ticket" => $ticket_code]);
 		if ($ticket) {
 			$replies = getTableFiltered("tickets_replies", "ticketid", $ticket['id'], "", "", "*", "id", "DESC");
+			$surveyExists = Survey::exists($ticket_code);
 		} else {
 			$ticket = false;
 			$error_message = __("Ticket with code") . " '" . htmlentities($ticket_code) . "' " . __("not found.");
@@ -591,6 +592,13 @@ if ($route == "surveyticket") {
 		$error_message = __("No ticket code provided.");
 	}
 	$department = getTable("tickets_departments");
+	$surveyExists = Survey::exists($ticket_code);
+}
+
+if ($route == "tickets/surveys") {
+	isAuthorized("manageSettings");
+	$surveys = Survey::getAll();
+	$pageTitle = __("Satisfaction Surveys");
 }
 
 

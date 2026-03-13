@@ -489,6 +489,14 @@
                                                 <?php echo $allTicketsCount; ?>
                                             </small></span>
                                     </a></li>
+                                <?php if (in_array("manageSettings", $perms)) { ?>
+                                    <li <?php if (strpos($route, 'tickets/surveys') !== false)
+                                        echo 'class="active"'; ?>>
+                                        <a href="?route=tickets/surveys"><i class="fa fa-angle-double-right"></i>
+                                            <?php _e('Results Survey'); ?>
+                                        </a>
+                                    </li>
+                                <?php } ?>
                             </ul>
                         </li>
                     <?php } ?>

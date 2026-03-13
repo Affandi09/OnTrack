@@ -122,12 +122,18 @@
                     </div>
                 </div>
 
-                <?php if ($ticket['status'] == 'Closed') { ?>
+                <?php if ($ticket['status'] == 'Closed' && !$surveyExists) { ?>
                     <div style="margin-top: 20px;">
                         <a href="?route=surveyticket&id=<?php echo $ticket['ticket']; ?>"
                             class="btn btn-primary btn-block btn-lg btn-rating">
                             <i class="fa fa-star" style="margin-right: 8px;"></i> <?php _e('Beri Survey Kepuasan'); ?>
                         </a>
+                    </div>
+                <?php } elseif ($surveyExists) { ?>
+                    <div style="margin-top: 20px;">
+                        <div class="alert alert-success text-center" style="border-radius: 10px; font-weight: 600;">
+                            <i class="fa fa-check-circle"></i> <?php _e('Terima kasih! Survey telah diisi.'); ?>
+                        </div>
                     </div>
                 <?php } ?>
             </div>
