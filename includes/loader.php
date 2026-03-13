@@ -67,7 +67,7 @@ if (!empty($_SESSION['statuscode'])) {
 }
 
 ### CHECK IF USER IS SIGNED IN, EXCEPT ON SIGNIN, RECOVER PASSWORD OR SUBMIT TICKET PAGE ###
-if ($route != "signin" && $route != "forgot" && $route != "submitticket" && $route != "checkticket")
+if ($route != "signin" && $route != "forgot" && $route != "submitticket" && $route != "checkticket" && $route != "surveyticket")
     isSignedIn();
 
 ### INITIALIZE LOGGED IN USER (LIU) ARRAY & PERMISSIONS ###

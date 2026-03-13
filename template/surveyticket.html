@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>
+        <?php _e('Survey Kepuasan Pelanggan'); ?>
+    </title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <link rel="shortcut icon" href="template/assets/icon.png" />
+    <link rel="apple-touch-icon" href="template/assets/icon-large.png" />
+    <!-- Bootstrap 3.3.7 -->
+    <link href="template/assets/bootstrap/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="template/assets/plugins/font-awesome/css/font-awesome.min.css">
+    <!-- Theme style -->
+    <link href="template/assets/dist/css/AdminLTE.min.css" rel="stylesheet" type="text/css" />
+    <link href="template/assets/dist/css/skins/_all-skins.css" rel="stylesheet" type="text/css" />
+    <link href="template/assets/custom.css" rel="stylesheet" type="text/css" />
+
+    <!-- Google Font -->
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,600,700,300italic,400italic,600italic">
+
+    <!-- jQuery 2.2.3 -->
+    <script src="template/assets/plugins/jQuery/jquery-2.2.3.min.js"></script>
+    <!-- SweetAlert2 -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            background-color: #f4f7f6 !important;
+            font-family: 'Source Sans Pro', sans-serif;
+        }
+
+        .content-wrapper {
+            background: transparent !important;
+        }
+
+        .survey-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(238, 232, 232, 0.05);
+            border: none;
+            padding: 40px;
+            margin-bottom: 30px;
+            transition: all 0.3s ease;
+        }
+
+        .survey-header h1 {
+            color: #2c3e50;
+            font-weight: 700;
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .survey-header p {
+            font-size: 16px;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: #3498db;
+            font-weight: 700;
+            margin-bottom: 25px;
+            border-bottom: 1px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: #34495e;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .form-control {
+            border-radius: 8px;
+            border: 1px solid #dce4ec;
+            padding: 10px 15px;
+            height: auto;
+            transition: all 0.2s;
+            box-shadow: none;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        /* Custom Radio Buttons */
+        .rating-container {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .rating-option {
+            flex: 1;
+            position: relative;
+        }
+
+        .rating-option input {
+            position: absolute;
+            opacity: 0;
+            cursor: pointer;
+            height: 0;
+            width: 0;
+        }
+
+        .rating-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: #f8f9fa;
+            border: 2px solid #edeff2;
+            border-radius: 12px;
+            padding: 12px 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: 700;
+            color: #95a5a6;
+        }
+
+        .rating-option:hover .rating-label {
+            border-color: #3498db;
+            background: #f0f7fd;
+            color: #3498db;
+        }
+
+        .rating-option input:checked+.rating-label {
+            background: #3498db;
+            border-color: #3498db;
+            color: #fff;
+            box-shadow: 0 4px 10px rgba(52, 152, 219, 0.3);
+        }
+
+        .question-box {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #f0f0f0;
+            margin-bottom: 20px;
+            transition: transform 0.2s;
+        }
+
+        .question-box:hover {
+            transform: translateY(-2px);
+            border-color: #edeff2;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.02);
+        }
+
+        .question-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #2c3e50;
+            line-height: 1.5;
+            margin-bottom: 15px;
+            display: block;
+        }
+
+        .btn-submit {
+            background: #3498db;
+            border: none;
+            border-radius: 10px;
+            padding: 16px;
+            font-weight: 700;
+            font-size: 16px;
+            color: white;
+            box-shadow: 0 6px 20px rgba(52, 152, 219, 0.3);
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-submit:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
+            color: white;
+        }
+
+        .btn-submit:active {
+            transform: translateY(0);
+        }
+
+        @media (max-width: 768px) {
+            .survey-card {
+                padding: 25px;
+            }
+
+            .rating-container {
+                gap: 5px;
+            }
+
+            .rating-label {
+                padding: 10px 5px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+
+<body class="hold-transition skin-blue layout-top-nav">
+    <div class="wrapper">
+        <div class="content-wrapper">
+            <div class="container">
+                <section class="content" style="padding-top: 50px;">
+                    <div class="row">
+                        <div class="col-md-8 col-md-offset-2">
+                            <div class="survey-card">
+                                <div class="survey-header text-center">
+                                    <img src="../template/assets/icon-logo.webp" alt="Logo"
+                                        style="width: 80px; height: auto; margin-bottom: 10px;">
+                                    <h1>
+                                        <?php _e('Survey Kepuasan'); ?>
+                                    </h1>
+                                    <p>
+                                        <?php _e('Terima kasih telah menggunakan layanan kami. <br> Mohon luangkan waktu sejenak untuk mengisi survey singkat ini.'); ?>
+                                    </p>
+                                </div>
+
+                                <form action="" method="post" id="surveyForm">
+                                    <input type="hidden" name="ticket_id"
+                                        value="<?php echo htmlspecialchars($_GET['id']); ?>">
+                                    <input type="hidden" name="action" value="submitSurvey">
+                                    <input type="hidden" name="ajax" value="1">
+
+                                    <div class="section-title">
+                                        <?php _e('Informasi Responden'); ?>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="nama">
+                                                    <?php _e('Nama Lengkap *'); ?>
+                                                </label>
+                                                <input type="text" class="form-control" id="nama" name="nama" required
+                                                    placeholder="Nama Anda">
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="department_id">
+                                                    <?php _e('Divisi *'); ?>
+                                                </label>
+                                                <select class="form-control select2" id="department_id"
+                                                    name="department_id" style="width: 100%;" required>
+                                                    <option value="">
+                                                        <?php _e('Pilih Divisi'); ?>
+                                                    </option>
+                                                    <?php foreach ($department as $dept) { ?>
+                                                        <option value="<?php echo $dept['id']; ?>">
+                                                            <?php echo $dept['name']; ?>
+                                                        </option>
+                                                    <?php } ?>
+                                                </select>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-12">
+                                            <div class="form-group">
+                                                <label for="email">
+                                                    <?php _e('Alamat Email *'); ?>
+                                                </label>
+                                                <input type="email" class="form-control" id="email" name="email"
+                                                    value="<?php echo isset($ticket['email']) ? htmlspecialchars($ticket['email']) : ''; ?>"
+                                                    required placeholder="email@example.com">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="section-title" style="margin-top: 40px;">
+                                        <?php _e('Penilaian Layanan'); ?>
+                                        <div class="pull-right"
+                                            style="font-size: 11px; text-transform: none; font-weight: 500; color: #95a5a6; letter-spacing: 0;">
+                                            (1: Sangat Kurang, 5: Sangat Baik)
+                                        </div>
+                                    </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <!-- Question 1 -->
+                                            <div class="question-box">
+                                                <label class="question-text">1. Apakah kendala yang disampaikan di Web
+                                                    IT
+                                                    Track atau Aplikasi Chat (Whatsapp) telah ditangani dengan
+                                                    baik?</label>
+                                                <div class="rating-container">
+                                                    <?php for ($i = 1; $i <= 5; $i++) { ?>
+                                                        <div class="rating-option">
+                                                            <input type="radio" name="q1" id="q1_<?php echo $i; ?>"
+                                                                value="<?php echo $i; ?>" required>
+                                                            <label for="q1_<?php echo $i; ?>"
+                                                                class="rating-label"><?php echo $i; ?></label>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+
+                                            <!-- Question 2 -->
+                                            <div class="question-box">
+                                                <label class="question-text">2. Apakah kendala yang disampaikan di Web
+                                                    IT
+                                                    Track atau Aplikasi Chat (Whatsapp) telah ditanggapi dengan
+                                                    cepat?</label>
+                                                <div class="rating-container">
+                                                    <?php for ($i = 1; $i <= 5; $i++) { ?>
+                                                        <div class="rating-option">
+                                                            <input type="radio" name="q2" id="q2_<?php echo $i; ?>"
+                                                                value="<?php echo $i; ?>" required>
+                                                            <label for="q2_<?php echo $i; ?>"
+                                                                class="rating-label"><?php echo $i; ?></label>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+
+                                            <!-- Question 3 -->
+                                            <div class="question-box">
+                                                <label class="question-text">3. Seberapa cepat penanganan yang dilakukan
+                                                    oleh IT? Berdasarkan kompleksitas kendala yang dihadapi?</label>
+                                                <div class="rating-container">
+                                                    <?php for ($i = 1; $i <= 5; $i++) { ?>
+                                                        <div class="rating-option">
+                                                            <input type="radio" name="q3" id="q3_<?php echo $i; ?>"
+                                                                value="<?php echo $i; ?>" required>
+                                                            <label for="q3_<?php echo $i; ?>"
+                                                                class="rating-label"><?php echo $i; ?></label>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+
+                                            <!-- Question 4 -->
+                                            <div class="question-box">
+                                                <label class="question-text">4. Berdasarkan indikator berikut, seberapa
+                                                    puas kinerja dan penyelesaian masalah oleh Departemen IT
+                                                    Infrastruktur dan Cyber Security?</label>
+                                                <div class="rating-container">
+                                                    <?php for ($i = 1; $i <= 5; $i++) { ?>
+                                                        <div class="rating-option">
+                                                            <input type="radio" name="q4" id="q4_<?php echo $i; ?>"
+                                                                value="<?php echo $i; ?>" required>
+                                                            <label for="q4_<?php echo $i; ?>"
+                                                                class="rating-label"><?php echo $i; ?></label>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+
+                                            <!-- Question 5 -->
+                                            <div class="question-box">
+                                                <label class="question-text">5. Apakah Anda akan merekomendasikan
+                                                    layanan
+                                                    IT kami?</label>
+                                                <div class="rating-container">
+                                                    <?php for ($i = 1; $i <= 5; $i++) { ?>
+                                                        <div class="rating-option">
+                                                            <input type="radio" name="q5" id="q5_<?php echo $i; ?>"
+                                                                value="<?php echo $i; ?>" required>
+                                                            <label for="q5_<?php echo $i; ?>"
+                                                                class="rating-label"><?php echo $i; ?></label>
+                                                        </div>
+                                                    <?php } ?>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <button type="submit" class="btn btn-block btn-submit">
+                                        <i class="fa fa-paper-plane" style="margin-right: 10px;"></i>
+                                        <?php _e('Kirim Survey Kepuasan'); ?>
+                                    </button>
+
+                                    <input type="hidden" name="action" value="submitSurvey">
+                                </form>
+                            </div>
+
+                            <div class="text-center text-muted" style="margin-bottom: 50px; font-size: 13px;">
+                                <strong>Copyright &copy; <?php echo date('Y'); ?>
+                                    <?php echo getConfigValue("company_name"); ?>.</strong> All rights reserved.
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // Animating question entry
+            $('.question-box').each(function (index) {
+                $(this).css({
+                    'opacity': '0',
+                    'transform': 'translateY(20px)'
+                });
+                setTimeout(() => {
+                    $(this).animate({
+                        'opacity': '1'
+                    }, {
+                        step: function (now, fx) {
+                            $(this).css('transform', 'translateY(' + (20 * (1 - now)) + 'px)');
+                        },
+                        duration: 500
+                    });
+                }, index * 100);
+            });
+        });
+
+        $('#surveyForm').on('submit', function (e) {
+            e.preventDefault();
+
+            Swal.fire({
+                title: 'Sedang Mengirim...',
+                text: 'Mohon tunggu sebentar',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+
+            // Submit the form via AJAX
+            $.post('', $(this).serialize(), function (response) {
+                Swal.fire({
+                    title: 'Berhasil!',
+                    text: 'Terima kasih atas partisipasi Anda dalam survey ini.',
+                    icon: 'success',
+                    confirmButtonColor: '#3498db'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        window.location.href = '?route=signin';
+                    }
+                });
+            }).fail(function () {
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Terjadi kesalahan saat mengirim survey. Silakan coba lagi.',
+                    icon: 'error',
+                    confirmButtonColor: '#e74c3c'
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

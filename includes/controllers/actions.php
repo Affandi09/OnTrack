@@ -167,6 +167,16 @@ switch ($_POST['action']) {
 		$status = Ticket::addReply($_POST);
 		break;
 
+	case "submitSurvey":
+		$status = Survey::add($_POST);
+		if (isset($_POST['ajax'])) {
+			echo $status;
+			exit;
+		} else {
+			reroute(["route" => "signin"], $status);
+		}
+		break;
+
 
 	// credentials
 	case "addCredential":
