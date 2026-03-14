@@ -17,6 +17,30 @@
     <?php } ?>
     <?php if(!$isAdmin) { ?><input type="hidden" name="clientid" value="<?php echo $liu['clientid']; ?>"><?php } ?>
 
+    <div class="form-group">
+        <label for="branch_id"><?php _e('Branch'); ?></label>
+        <select class="form-control select2" id="branch_id" name="branch_id" style="width: 100%;">
+            <option value="0"><?php _e('None'); ?></option>
+            <?php foreach ($branches as $branch) { echo "<option value='".$branch['id']."'>".$branch['name']."</option>"; } ?>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="submitter_id"><?php _e('Submitter'); ?></label>
+        <select class="form-control select2" id="submitter_id" name="submitter_id" style="width: 100%;">
+            <option value="0"><?php _e('None'); ?></option>
+            <?php foreach ($submitters as $submitter) { echo "<option value='".$submitter['id']."'>".$submitter['name']."</option>"; } ?>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label for="departmenId"><?php _e('Department'); ?></label>
+        <select class="form-control select2" id="departmenId" name="departmenId" style="width: 100%;">
+            <option value="0"><?php _e('None'); ?></option>
+            <?php foreach ($departments as $dept) { echo "<option value='".$dept['id']."'>".$dept['name']."</option>"; } ?>
+        </select>
+    </div>
+
 
     <input type="hidden" name="action" value="addLocation">
     <input type="hidden" name="route" value="<?php echo $_GET['reroute']; ?>">

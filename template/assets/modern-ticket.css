@@ -1,0 +1,191 @@
+/* Modern Ticket Submission CSS - Premium Light Mode Theme */
+
+:root {
+    --primary-color: #3e81f1;
+    --primary-hover: #2c66c9;
+    --bg-light: #ffffff;
+    --card-bg: #ffffff;
+    --card-border: #e2e8f0;
+    --card-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.1);
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --input-bg: #ffffff;
+    --input-border: #cbd5e1;
+    --accent-blue: #3b82f6;
+}
+
+html, body, .wrapper, .content-wrapper {
+    background: var(--bg-light) !important;
+}
+
+body.hold-transition.skin-blue.layout-top-nav.modern-theme {
+    min-height: 100vh;
+    font-family: 'Outfit', sans-serif !important;
+    color: var(--text-main);
+}
+
+.modern-theme .content-wrapper {
+    background: var(--bg-light) !important;
+}
+
+.modern-theme .main-footer {
+    background: var(--bg-light) !important;
+    border-top: 1px solid var(--card-border) !important;
+    color: var(--text-muted);
+    padding: 20px 0;
+}
+
+/* Modern Card Layout */
+.modern-form-container {
+    padding-top: 40px;
+    padding-bottom: 60px;
+    animation: fadeIn 0.6s ease-out;
+}
+
+.modern-glass-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 20px;
+    box-shadow: var(--card-shadow);
+    padding: 40px;
+    color: var(--text-main);
+}
+
+.modern-glass-card .box-header {
+    border-bottom: 1px solid #f1f5f9;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+}
+
+.modern-glass-card .box-title {
+    font-size: 26px !important;
+    font-weight: 700 !important;
+    color: var(--text-main) !important;
+    letter-spacing: -0.5px;
+}
+
+/* Form Styling */
+.modern-theme .form-group label {
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.modern-theme .form-control {
+    background: var(--input-bg) !important;
+    border: 1.5px solid var(--input-border) !important;
+    border-radius: 10px !important;
+    color: var(--text-main) !important;
+    height: 46px;
+    padding: 10px 14px;
+    transition: all 0.2s ease;
+}
+
+.modern-theme .form-control:focus {
+    border-color: var(--primary-color) !important;
+    box-shadow: 0 0 0 4px rgba(62, 129, 241, 0.1) !important;
+    outline: none;
+}
+
+/* Select2 Modernization */
+.modern-theme .select2-container--default .select2-selection--single {
+    background: var(--input-bg) !important;
+    border: 1.5px solid var(--input-border) !important;
+    border-radius: 10px !important;
+    height: 46px !important;
+    line-height: 46px !important;
+}
+
+.modern-theme .select2-container--default .select2-selection--single .select2-selection__rendered {
+    color: var(--text-main) !important;
+    line-height: 46px !important;
+    padding-left: 14px !important;
+}
+
+.modern-theme .select2-container--default .select2-selection--single .select2-selection__arrow {
+    height: 44px !important;
+}
+
+/* Summernote Modernization */
+.modern-theme .note-editor.note-frame {
+    border: 1.5px solid var(--input-border) !important;
+    border-radius: 10px !important;
+    background: var(--input-bg) !important;
+    overflow: hidden;
+}
+
+.modern-theme .note-toolbar {
+    background: #f8fafc !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+}
+
+.modern-theme .note-editable {
+    color: var(--text-main) !important;
+}
+
+/* Modern Buttons */
+.btn-primary.btn-modern {
+    background: var(--primary-color) !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 12px 36px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.3px;
+    box-shadow: 0 4px 6px -1px rgba(62, 129, 241, 0.2);
+    transition: all 0.2s ease !important;
+}
+
+.btn-primary.btn-modern:hover {
+    background: var(--primary-hover) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(62, 129, 241, 0.3);
+}
+
+/* Attachments Area */
+#file-inputs-container {
+    background: #f8fafc;
+    border: 2px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.btn-add-file {
+    background: #ffffff !important;
+    border: 1px solid #cbd5e1 !important;
+    color: var(--text-main) !important;
+    border-radius: 8px !important;
+    font-weight: 500 !important;
+    padding: 6px 14px !important;
+}
+
+.btn-add-file:hover {
+    border-color: var(--primary-color) !important;
+    color: var(--primary-color) !important;
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Status Messages Overrides */
+.swal2-popup {
+    border-radius: 16px !important;
+    font-family: 'Outfit', sans-serif !important;
+}
+
+.swal2-title {
+    color: var(--text-main) !important;
+}

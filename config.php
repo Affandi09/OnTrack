@@ -1,6 +1,6 @@
 <?php $config = array(
     "database_type" => "mysql",
-    "database_name" => "it_helpdesk",
+    "database_name" => "it_helpdesk_new",
     "server" => "db",
     "username" => "root",
     "password" => "password",

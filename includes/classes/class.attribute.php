@@ -150,7 +150,13 @@ class Attribute extends App
 	public static function addLocation($data)
 	{
 		global $database;
-		$lastid = $database->insert("locations", ["name" => $data['name'], "clientid" => $data['clientid']]);
+		$lastid = $database->insert("locations", [
+			"name" => $data['name'],
+			"clientid" => $data['clientid'],
+			"branch_id" => $data['branch_id'],
+			"submitter_id" => $data['submitter_id'],
+			"departmenId" => $data['departmenId']
+		]);
 		if ($lastid == "0") {
 			return "11";
 		} else {
@@ -162,7 +168,13 @@ class Attribute extends App
 	public static function editLocation($data)
 	{
 		global $database;
-		$database->update("locations", ["name" => $data['name'], "clientid" => $data['clientid']], ["id" => $data['id']]);
+		$database->update("locations", [
+			"name" => $data['name'],
+			"clientid" => $data['clientid'],
+			"branch_id" => $data['branch_id'],
+			"submitter_id" => $data['submitter_id'],
+			"departmenId" => $data['departmenId']
+		], ["id" => $data['id']]);
 		logSystem("Location Edited - ID: " . $data['id']);
 		return "20";
 	}
@@ -172,6 +184,38 @@ class Attribute extends App
 		global $database;
 		$database->delete("locations", ["id" => $id]);
 		logSystem("Location Deleted - ID: " . $id);
+		return "30";
+	}
+
+
+	// ----------------------------------------------------------------------------------------------
+	// BRANCHES
+
+	public static function addBranch($data)
+	{
+		global $database;
+		$lastid = $database->insert("branches", ["name" => $data['name']]);
+		if ($lastid == "0") {
+			return "11";
+		} else {
+			logSystem("Branch Added - ID: " . $lastid);
+			return "10";
+		}
+	}
+
+	public static function editBranch($data)
+	{
+		global $database;
+		$database->update("branches", ["name" => $data['name']], ["id" => $data['id']]);
+		logSystem("Branch Edited - ID: " . $data['id']);
+		return "20";
+	}
+
+	public static function deleteBranch($id)
+	{
+		global $database;
+		$database->delete("branches", ["id" => $id]);
+		logSystem("Branch Deleted - ID: " . $id);
 		return "30";
 	}
 
