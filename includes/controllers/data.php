@@ -785,7 +785,7 @@ if ($route == "reports/view") {
 		}
 	} elseif ($_GET['report'] == "ticketsReport") {
 		$startdate = dateDb($_GET['startDate']) . " 00:00:00";
-		$enddate = dateDb($_GET['endDate']) . " 00:00:00";
+		$enddate = dateDb($_GET['endDate']) . " 23:59:59";
 		if ($_GET['clientid'] == "0") {
 			$tickets = $database->select("tickets", "*", [
 				"timestamp[<>]" => [$startdate, $enddate],
@@ -797,7 +797,8 @@ if ($route == "reports/view") {
 				"AND" => [
 					"timestamp[<>]" => [$startdate, $enddate],
 					"clientid" => $_GET['clientid']
-				]
+				],
+				"ORDER" => ["timestamp" => "DESC"]
 			]);
 		}
 		$departments = getTable("tickets_departments");
