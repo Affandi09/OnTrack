@@ -63,8 +63,14 @@
                                         <?php echo htmlspecialchars($reply['timestamp']); ?>
                                     </span>
                                     <h3 class="timeline-header" style="font-weight: 600; color: #444; font-size: 15px;">
-                                        <?php echo htmlspecialchars(getSingleValue("people", "name", $reply['adminid'])); ?>
-                                        <?php _e('replied'); ?>
+                                        <?php if ($reply['peopleid'] > 0): ?>
+                                            <a href="#"><?php echo htmlspecialchars(getSingleValue("people", "name", $reply['peopleid'])); ?>
+                                                [<?php echo __(ucfirst(getSingleValue("people", "type", $reply['peopleid']))); ?>]</a>
+                                        <?php elseif ($reply['peopleid'] == 0): ?>
+                                            <a href="#"><?php echo htmlspecialchars($ticket['email']); ?> [<?php _e('Customer'); ?>]</a>
+                                        <?php elseif ($reply['peopleid'] == -1): ?>
+                                            <a href="#">[<?php _e('System'); ?>]</a>
+                                        <?php endif; ?>
                                     </h3>
                                     <div class="timeline-body" style="color: #555; font-size: 14px; line-height: 1.6;">
                                         <?php echo $reply['message']; ?>
@@ -230,18 +236,90 @@
                                                 <?php if (isset($replies) && is_array($replies)) {
                                                     foreach ($replies as $reply) { ?>
                                                         <li>
-                                                            <i class="fa fa-comment bg-aqua"></i>
+                                                            <!-- timeline icon -->
+                                                            <?php if ($reply['peopleid'] > 0) { ?>
+                                                                <img src="<?php echo getGravatar(getSingleValue("people", "email", $reply['peopleid']), "32"); ?>"
+                                                                    class="img-circle timeline-image" style="height:32px;width:32px;" />
+                                                            <?php } ?>
+                                                            <?php if ($reply['peopleid'] == 0) { ?>
+                                                                <img src="<?php echo getGravatar($ticket['email'], "32"); ?>"
+                                                                    class="img-circle timeline-image" style="height:32px;width:32px;" />
+                                                            <?php } ?>
+                                                            <?php if ($reply['peopleid'] == -1) { ?>
+                                                                <img src="template/assets/icon.png" class="img-circle timeline-image"
+                                                                    style="max-height:32px;" />
+                                                            <?php } ?>
+
                                                             <div class="timeline-item">
                                                                 <span class="time"><i class="fa fa-clock-o"></i>
-                                                                    <?php echo htmlspecialchars($reply['timestamp']); ?>
-                                                                </span>
-                                                                <h3 class="timeline-header">
-                                                                    <?php echo htmlspecialchars(getSingleValue("people", "name", $reply['adminid'])); ?>
-                                                                    <?php _e('replied'); ?>
-                                                                </h3>
+                                                                    <?php echo dateTimeDisplay($reply['timestamp']); ?></span>
+
+                                                                <?php if ($reply['peopleid'] > 0) { ?>
+                                                                    <h3 class="timeline-header"><a
+                                                                            href="#"><?php echo getSingleValue("people", "name", $reply['peopleid']); ?>
+                                                                            [<?php echo __(ucfirst(getSingleValue("people", "type", $reply['peopleid']))); ?>]</a>
+                                                                        <?php echo smartDate(strtotime($reply['timestamp'])); ?></h3>
+                                                                <?php } ?>
+                                                                <?php if ($reply['peopleid'] == 0) { ?>
+                                                                    <h3 class="timeline-header"><a href="#"><?php echo $ticket['email']; ?>
+                                                                            [<?php _e('Not a registered user'); ?>]</a>
+                                                                        <?php echo smartDate(strtotime($reply['timestamp'])); ?></h3>
+                                                                <?php } ?>
+                                                                <?php if ($reply['peopleid'] == -1) { ?>
+                                                                    <h3 class="timeline-header"><a href="#">[<?php _e('System'); ?>]</a>
+                                                                        <?php echo smartDate(strtotime($reply['timestamp'])); ?></h3>
+                                                                <?php } ?>
+
                                                                 <div class="timeline-body">
-                                                                    <?php echo $reply['message']; ?>
+
+                                                                    <div class="email-container" style="overflow-x:hidden;">
+                                                                        <?php
+                                                                        if (isHTML($reply['message'])) {
+                                                                            $clean_html = $purifier->purify($reply['message']);
+                                                                            echo $clean_html;
+                                                                            //echo washtml($clean_html);
+                                                                        } else {
+                                                                            echo nl2br(washtml($reply['message']));
+                                                                        }
+
+                                                                        ?>
+                                                                    </div>
+
+                                                                    <?php $files = getTableFiltered("files", "ticketreplyid", $reply['id']);
+                                                                    if (!empty($files)) { ?>
+                                                                        <ul class="todo-list list-inline" id="fileslist">
+                                                                            <?php foreach ($files as $file) { ?>
+                                                                                <li id="" style="width:95%;margin:10px;padding:12px;">
+                                                                                    <div class="row">
+                                                                                        <div class="col-xs-1" style="vertical-align:middle"><i
+                                                                                                class="fa fa-<?php echo File::icon($file['file']); ?>"></i>
+                                                                                        </div>
+                                                                                        <div class="col-xs-9">
+                                                                                            <?php echo $file['name']; ?>
+                                                                                        </div>
+                                                                                        <div class="col-xs-2 text-right">
+                                                                                            <?php if (in_array("viewFiles", $perms)) { ?><a
+                                                                                                    href="#"
+                                                                                                    onClick='showM("?modal=files/view&reroute=tickets/manage&routeid=<?php echo $ticket['id']; ?>&id=<?php echo $file['id']; ?>&section=");return false'
+                                                                                                    class='btn-right text-dark'><i
+                                                                                                        class='fa fa-eye'></i></a>&nbsp;<?php } ?>
+                                                                                            <a href="<?php echo "?qa=download&id=" . $file['id']; ?>"
+                                                                                                class='btn-right text-dark'><i
+                                                                                                    class='fa fa-download'></i></a>&nbsp;
+                                                                                            <a href="#"
+                                                                                                onClick='showM("?modal=files/delete&reroute=tickets/manage&routeid=<?php echo $ticket['id']; ?>&id=<?php echo $file['id']; ?>&section=");return false'
+                                                                                                class='btn-right text-red'><i
+                                                                                                    class='fa fa-trash-o'></i></a>
+                                                                                        </div>
+                                                                                    </div>
+
+                                                                                </li>
+                                                                            <?php } ?>
+                                                                        </ul>
+                                                                    <?php } ?>
+
                                                                 </div>
+
                                                             </div>
                                                         </li>
                                                     <?php }
@@ -308,7 +386,7 @@
 
 <style>
     .btn-rating {
-        background: #3498db;
+        background: #F7941E;
         border: none;
         border-radius: 10px;
         padding: 16px;
@@ -321,7 +399,7 @@
     }
 
     .btn-rating:hover {
-        background: #2980b9;
+        background: #F7941E;
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
         color: white;

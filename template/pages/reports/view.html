@@ -173,114 +173,261 @@
 
 	<?php } elseif($_GET['report'] == "ticketsReport") { ?>
 
+	<?php
+	// Pre-compute stats
+	$totalTickets  = count($tickets);
+	$openTickets   = 0;
+	$closedTickets = 0;
+	$totalRespondSecs = 0;
+	$respondCount  = 0;
+	foreach ($tickets as $tck) {
+		if ($tck['status'] == 'Open' || $tck['status'] == 'Reopened') $openTickets++;
+		if ($tck['status'] == 'Closed') $closedTickets++;
+		if (!empty($tck['respondtime']) && !empty($tck['timestamp'])) {
+			$diff = strtotime($tck['respondtime']) - strtotime($tck['timestamp']);
+			if ($diff > 0) { $totalRespondSecs += $diff; $respondCount++; }
+		}
+	}
+	$avgRespondSecs = $respondCount > 0 ? round($totalRespondSecs / $respondCount) : 0;
+	$avgH = floor($avgRespondSecs / 3600);
+	$avgM = floor(($avgRespondSecs % 3600) / 60);
+	$avgRespondStr = $avgH . 'j ' . $avgM . 'm';
+	?>
 
-		<div class="row"><div class="col-xs-12"><h2 class="page-header"><i class="fa fa-globe"></i> <?php echo getConfigValue("company_name"); ?><small class="pull-right"><?php _e('Date:'); ?> <?php echo dateDisplay(date('Y-m-d')); ?></small></h2></div></div>
-		<div class="row">
-			<div class="col-xs-6"><h4><b><?php _e('TICKETS REPORT'); ?></b></h4></div>
-			<div class="col-xs-6 text-right">
-				<?php if(isset($_GET['clientid']) && $_GET['clientid'] != 0) echo "<h4>".__("Client")." <b>".getSingleValue("clients","name",$_GET['clientid'])."</b></h4>"; ?>
-				<?php if(isset($_GET['startDate']) && isset($_GET['endDate'])) echo "<h4>".__("Date range")." <b>".$_GET['startDate']." - ".$_GET['endDate']."</b></h4>"; ?>
+	<style>
+		@page { size: A4 landscape; margin: 10mm; }
+		@media print {
+			.no-print { display: none !important; }
+			.stat-cards-row { display: none !important; }
+			body { font-size: 10px; }
+			.report-table th, .report-table td { padding: 3px 4px !important; font-size: 9px !important; }
+		}
+		.report-table th {
+			background: #2c3e50; color: #fff; font-weight: 600;
+			white-space: nowrap; vertical-align: middle !important; font-size: 12px;
+		}
+		.report-table td { vertical-align: middle !important; font-size: 12px; }
+		.report-table tbody tr:hover { background: #f0f7ff; }
+		.badge-status { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600; }
+		.badge-open     { background: #d4edda; color: #1a7a3a; }
+		.badge-inprog   { background: #fff3cd; color: #856404; }
+		.badge-answered { background: #cce5ff; color: #004085; }
+		.badge-closed   { background: #f8d7da; color: #721c24; }
+		.badge-reopened { background: #e2e3e5; color: #383d41; }
+		.stat-card { border-radius: 12px; padding: 18px 22px; color: #fff; box-shadow: 0 4px 14px rgba(0,0,0,0.12); margin-bottom: 20px; position: relative; overflow: hidden; }
+		.stat-card .stat-num { font-size: 32px; font-weight: 700; line-height: 1; }
+		.stat-card .stat-lbl { font-size: 12px; margin-top: 4px; opacity: 0.88; letter-spacing: 0.5px; text-transform: uppercase; }
+		.stat-card .stat-icon { font-size: 38px; opacity: 0.22; position: absolute; right: 18px; top: 14px; }
+		.dept-table th { background: #34495e; color: #fff; font-size: 12px; }
+		.dept-table td { font-size: 12px; }
+		.bar-wrap { background: #eee; border-radius: 4px; height: 8px; min-width: 80px; display: inline-block; vertical-align: middle; margin-left: 6px; width: 100%; }
+		.bar-fill  { height: 8px; border-radius: 4px; background: #3498db; }
+	</style>
+
+	<!-- HEADER -->
+	<div class="row">
+		<div class="col-xs-12">
+			<h2 class="page-header">
+				<i class="fa fa-globe"></i> <?php echo getConfigValue("company_name"); ?>
+				<small class="pull-right"><?php _e('Date:'); ?> <?php echo dateDisplay(date('Y-m-d')); ?></small>
+			</h2>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-xs-6"><h4><b><?php _e('TICKETS REPORT'); ?></b></h4></div>
+		<div class="col-xs-6 text-right">
+			<?php if(isset($_GET['clientid']) && $_GET['clientid'] != 0) echo "<h4>".__('Client')." <b>".getSingleValue("clients","name",$_GET['clientid'])."</b></h4>"; ?>
+			<?php if(isset($_GET['startDate']) && isset($_GET['endDate'])) echo "<h4>".__('Date range')." <b>".$_GET['startDate']." - ".$_GET['endDate']."</b></h4>"; ?>
+		</div>
+	</div>
+
+	<!-- STAT CARDS (screen only) -->
+	<div class="row stat-cards-row no-print" style="margin-top: 15px; margin-bottom: 5px;">
+		<div class="col-md-3">
+			<div class="stat-card" style="background: linear-gradient(135deg,#2980b9,#3498db);">
+				<i class="fa fa-ticket stat-icon"></i>
+				<div class="stat-num"><?php echo $totalTickets; ?></div>
+				<div class="stat-lbl">Total Tickets</div>
 			</div>
 		</div>
-		<br>
-
-		<div class="row">
-
-
-
-		  <div class="col-xs-12 table-responsive">
-			  <table class="table table-striped table-bordered">
-				  <thead>
-					  <tr>
-						  <th colspan="9"><span class="lead"><b><?php _e('TICKETS'); ?></b></span></th>
-					  </tr>
-					  <tr>
-						  <th><?php _e('Ticket'); ?></th>
-						  <th><?php _e('Department'); ?></th>
-						  <th><?php _e('Client'); ?></th>
-						  <th><?php _e('Asset'); ?></th>
-						  <th><?php _e('Project'); ?></th>
-						  <th><?php _e('Submitter'); ?></th>
-						  <th><?php _e('PIC'); ?></th>
-						  <th><?php _e('Subject'); ?></th>
-						  <th><?php _e('Date Added'); ?></th>
-						  <th><?php _e('Respond'); ?></th>
-						  <th><?php _e('Progress'); ?></th>
-						  <th><?php _e('Close'); ?></th>
-						  <th><?php _e('Action'); ?></th>
-						  <th><?php _e('Status'); ?></th>
-					  </tr>
-				  </thead>
-				  <tbody>
-					  <?php foreach($tickets as $ticket) { ?>
-					  <tr>
-						  <td>#<?php echo $ticket['ticket']; ?></td>
-						  <td><?php echo getSingleValue("tickets_departments","name",$ticket['departmentid']); ?></td>
-						  <td><?php echo getSingleValue("clients","name",$ticket['clientid']); ?></td>
-						  <td><?php echo getSingleValue("assets","tag",$ticket['assetid']); ?><br><?php echo getSingleValue("assets","name",$ticket['assetid']); ?></td>
-						  <td><?php echo getSingleValue("projects","tag",$ticket['projectid']); ?><br><?php echo getSingleValue("projects","name",$ticket['projectid']); ?></td>
-						  <td><?php echo getSingleValue("people","name",$ticket['userid']); ?></td>
-						  <td><?php echo getSingleValue("people","name",$ticket['adminid']); ?></td>
-						  <td><?php echo $ticket['subject']; ?></td>						  
-						  <td><?php echo dateTimeDisplay($ticket['timestamp']); ?></td>
-						  <td><?php echo dateTimeDisplay($ticket['respondtime']); ?></td>
-						  <td><?php echo dateTimeDisplay($ticket['inprogresstime']); ?></td>
-						  <td><?php echo dateTimeDisplay($ticket['closetime']); ?></td>
-						  <td><?php echo $ticket['notes']; ?></td>
-						  <td><?php echo $ticket['status']; ?></td>
-					  </tr>
-					  <?php } ?>
-				  </tbody>
-				  <tfoot>
-					  <tr>
-						  <th colspan="9"><?php echo count($tickets); ?> <?php _e('Tickets'); ?></th>
-					  </tr>
-				  </tfoot>
-
-			  </table>
+		<div class="col-md-3">
+			<div class="stat-card" style="background: linear-gradient(135deg,#27ae60,#2ecc71);">
+				<i class="fa fa-envelope-open stat-icon"></i>
+				<div class="stat-num"><?php echo $openTickets; ?></div>
+				<div class="stat-lbl">Open / Reopened</div>
+			</div>
 		</div>
-
-
-
-					<div class="col-xs-12 table-responsive">
-						<table class="table table-striped table-bordered">
-							<thead>
-								<tr>
-									<th colspan="8"><span class="lead"><b><?php _e('BY DEPARTMENT'); ?></b></span></th>
-								</tr>
-								<tr>
-									<th><?php _e('Department'); ?></th>
-									<th><?php _e('Tickets'); ?></th>
-
-								</tr>
-							</thead>
-							<tbody>
-								<?php foreach($departments as $department) { ?>
-									<?php
-
-									?>
-									<tr>
-										<td><?php echo $department['name']; ?></td>
-
-										<td><?php echo counTicketsByDepartment($department['id'], $startdate, $enddate, $_GET['clientid']); ?></td>
-
-									</tr>
-								<?php } ?>
-							</tbody>
-						</table>
-				  </div>
-
+		<div class="col-md-3">
+			<div class="stat-card" style="background: linear-gradient(135deg,#c0392b,#e74c3c);">
+				<i class="fa fa-check-circle stat-icon"></i>
+				<div class="stat-num"><?php echo $closedTickets; ?></div>
+				<div class="stat-lbl">Closed</div>
+			</div>
 		</div>
+		<div class="col-md-3">
+			<div class="stat-card" style="background: linear-gradient(135deg,#8e44ad,#9b59b6);">
+				<i class="fa fa-clock-o stat-icon"></i>
+				<div class="stat-num"><?php echo $respondCount > 0 ? $avgRespondStr : '-'; ?></div>
+				<div class="stat-lbl">Avg. Respond Time</div>
+			</div>
+		</div>
+	</div>
 
-		<!-- this row will not appear when printing -->
-		<div class="row no-print">
-          <div class="col-xs-12">
-            <button onClick="window.print();" class="btn btn-default pull-right"><i class="fa fa-print"></i> <?php _e('Print'); ?></button>
-          </div>
-        </div>
+	<!-- MAIN TICKETS TABLE -->
+	<div class="row">
+		<div class="col-xs-12 table-responsive">
+			<table class="table table-bordered table-condensed table-hover report-table" id="ticketReportTable">
+				<thead>
+					<tr>
+						<th>#</th>
+						<th><?php _e('Ticket'); ?></th>
+						<th><?php _e('Department'); ?></th>
+						<th><?php _e('Client'); ?></th>
+						<th><?php _e('Submitter'); ?></th>
+						<th><?php _e('PIC'); ?></th>
+						<th><?php _e('Subject'); ?></th>
+						<th><?php _e('Issue (Kendala)'); ?></th>
+						<th><?php _e('Date Added'); ?></th>
+						<th><?php _e('Respond'); ?></th>
+						<th><?php _e('In Progress'); ?></th>
+						<th><?php _e('Closed At'); ?></th>
+						<th><?php _e('Durasi Respon'); ?></th>
+						<th><?php _e('Status'); ?></th>
+					</tr>
+				</thead>
+				<tbody>
+				<?php $no = 1; foreach($tickets as $ticket): ?>
+				<?php
+					$respondDur = '-';
+					if (!empty($ticket['respondtime']) && !empty($ticket['timestamp'])) {
+						$diff = strtotime($ticket['respondtime']) - strtotime($ticket['timestamp']);
+						if ($diff > 0) {
+							$rH = floor($diff / 3600);
+							$rM = floor(($diff % 3600) / 60);
+							$respondDur = $rH . 'j ' . $rM . 'm';
+						}
+					}
+					$badgeClass = 'badge-open';
+					if ($ticket['status'] == 'In Progress')  $badgeClass = 'badge-inprog';
+					elseif ($ticket['status'] == 'Answered') $badgeClass = 'badge-answered';
+					elseif ($ticket['status'] == 'Closed')   $badgeClass = 'badge-closed';
+					elseif ($ticket['status'] == 'Reopened') $badgeClass = 'badge-reopened';
+				?>
+				<tr>
+					<td><?php echo $no++; ?></td>
+					<td><b><?php echo htmlspecialchars($ticket['ticket']); ?></b></td>
+					<td><?php echo htmlspecialchars(getSingleValue("tickets_departments","name",$ticket['departmentid'])); ?></td>
+					<td><?php echo htmlspecialchars(getSingleValue("clients","name",$ticket['clientid'])); ?></td>
+					<td><?php echo htmlspecialchars(getSingleValue("people","name",$ticket['userid'])); ?></td>
+					<td><?php echo htmlspecialchars(getSingleValue("people","name",$ticket['adminid'])); ?></td>
+					<td><?php echo htmlspecialchars($ticket['subject']); ?></td>
+					<td><?php echo htmlspecialchars(!empty($ticket['kendala']) ? $ticket['kendala'] : (!empty($ticket['notes']) ? $ticket['notes'] : '-')); ?></td>
+					<td style="white-space:nowrap;"><?php echo dateTimeDisplay($ticket['timestamp']); ?></td>
+					<td style="white-space:nowrap;"><?php echo !empty($ticket['respondtime']) ? dateTimeDisplay($ticket['respondtime']) : '<span style="color:#bbb">-</span>'; ?></td>
+					<td style="white-space:nowrap;"><?php echo !empty($ticket['inprogresstime']) ? dateTimeDisplay($ticket['inprogresstime']) : '<span style="color:#bbb">-</span>'; ?></td>
+					<td style="white-space:nowrap;"><?php echo !empty($ticket['closetime']) ? dateTimeDisplay($ticket['closetime']) : '<span style="color:#bbb">-</span>'; ?></td>
+					<td style="white-space:nowrap; font-weight:600; color:<?php echo ($respondDur == '-') ? '#bbb' : '#2c3e50'; ?>">
+						<?php echo $respondDur; ?>
+					</td>
+					<td><span class="badge-status <?php echo $badgeClass; ?>"><?php echo htmlspecialchars($ticket['status']); ?></span></td>
+				</tr>
+				<?php endforeach; ?>
+				</tbody>
+				<tfoot>
+					<tr style="background:#f4f4f4; font-weight:600;">
+						<td colspan="7"><?php _e('Total'); ?>: <?php echo count($tickets); ?> <?php _e('Tickets'); ?></td>
+						<td colspan="7"></td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+	</div>
+
+	<!-- SUMMARY TABLES -->
+	<div class="row" style="margin-top: 20px;">
+		<div class="col-xs-12 col-md-6">
+			<?php
+			$deptCounts = [];
+			foreach ($tickets as $tck) {
+				$dname = getSingleValue("tickets_departments","name",$tck['departmentid']);
+				if (empty($dname)) $dname = '(No Department)';
+				$deptCounts[$dname] = ($deptCounts[$dname] ?? 0) + 1;
+			}
+			arsort($deptCounts);
+			$maxDept = count($deptCounts) > 0 ? max(array_values($deptCounts)) : 1;
+			?>
+			<table class="table table-bordered dept-table">
+				<thead>
+					<tr><th colspan="3"><i class="fa fa-pie-chart" style="margin-right:6px;"></i><?php _e('BY DEPARTMENT'); ?></th></tr>
+					<tr><th><?php _e('Department'); ?></th><th style="text-align:center;"><?php _e('Tickets'); ?></th><th></th></tr>
+				</thead>
+				<tbody>
+				<?php foreach($deptCounts as $dn => $dc): ?>
+				<tr>
+					<td><?php echo htmlspecialchars($dn); ?></td>
+					<td style="text-align:center; font-weight:700;"><?php echo $dc; ?></td>
+					<td><div class="bar-wrap"><div class="bar-fill" style="width:<?php echo round($dc/$maxDept*100); ?>%;"></div></div></td>
+				</tr>
+				<?php endforeach; ?>
+				</tbody>
+				<tfoot><tr style="font-weight:600;background:#f4f4f4;"><td>Total</td><td style="text-align:center;"><?php echo $totalTickets; ?></td><td></td></tr></tfoot>
+			</table>
+		</div>
+		<div class="col-xs-12 col-md-6">
+			<?php
+			$statusCounts = [];
+			foreach ($tickets as $tck) { $statusCounts[$tck['status']] = ($statusCounts[$tck['status']] ?? 0) + 1; }
+			arsort($statusCounts);
+			$statusColors = ['Open'=>'#2ecc71','Reopened'=>'#95a5a6','In Progress'=>'#f39c12','Answered'=>'#3498db','Closed'=>'#e74c3c'];
+			?>
+			<table class="table table-bordered dept-table">
+				<thead>
+					<tr><th colspan="3"><i class="fa fa-bar-chart" style="margin-right:6px;"></i><?php _e('BY STATUS'); ?></th></tr>
+					<tr><th><?php _e('Status'); ?></th><th style="text-align:center;"><?php _e('Tickets'); ?></th><th></th></tr>
+				</thead>
+				<tbody>
+				<?php foreach($statusCounts as $sn => $sc): ?>
+				<tr>
+					<td><?php echo htmlspecialchars($sn); ?></td>
+					<td style="text-align:center; font-weight:700;"><?php echo $sc; ?></td>
+					<td><div class="bar-wrap"><div class="bar-fill" style="width:<?php echo $totalTickets > 0 ? round($sc/$totalTickets*100) : 0; ?>%; background:<?php echo $statusColors[$sn] ?? '#3498db'; ?>;"></div></div></td>
+				</tr>
+				<?php endforeach; ?>
+				</tbody>
+				<tfoot><tr style="font-weight:600;background:#f4f4f4;"><td>Total</td><td style="text-align:center;"><?php echo $totalTickets; ?></td><td></td></tr></tfoot>
+			</table>
+		</div>
+	</div>
+
+	<!-- ACTION BUTTONS -->
+	<div class="row no-print" style="margin-top:10px;">
+		<div class="col-xs-12 text-right">
+			<button onclick="exportExcel()" class="btn btn-success" style="margin-right:8px; border-radius:6px; padding:8px 20px; font-weight:500;">
+				<i class="fa fa-file-excel-o" style="margin-right:5px;"></i> Export Excel
+			</button>
+			<button onclick="window.print();" class="btn btn-default" style="border-radius:6px; padding:8px 20px; font-weight:500;">
+				<i class="fa fa-print" style="margin-right:5px;"></i> <?php _e('Print'); ?>
+			</button>
+		</div>
+	</div>
+
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+	<script>
+	function exportExcel() {
+		var table = document.getElementById('ticketReportTable');
+		var wb = XLSX.utils.book_new();
+		var ws = XLSX.utils.table_to_sheet(table);
+		ws['!cols'] = [
+			{wch:4},{wch:12},{wch:18},{wch:20},{wch:18},{wch:18},
+			{wch:28},{wch:22},{wch:18},{wch:18},{wch:18},{wch:18},{wch:14},{wch:12}
+		];
+		XLSX.utils.book_append_sheet(wb, ws, "Tickets Report");
+		XLSX.writeFile(wb, 'tickets_report_<?php echo date("Ymd"); ?>.xlsx');
+	}
+	</script>
 
 
-	<?php } elseif($_GET['report'] == "timesheetSummary") { ?>
+		<?php } elseif($_GET['report'] == "timesheetSummary") { ?>
 
 
         <div class="row"><div class="col-xs-12"><h2 class="page-header"><i class="fa fa-globe"></i> <?php echo getConfigValue("company_name"); ?><small class="pull-right"><?php _e('Date:'); ?> <?php echo dateDisplay(date('Y-m-d')); ?></small></h2></div></div>
