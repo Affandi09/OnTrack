@@ -9,7 +9,8 @@ class Ticket extends App
     public static function add($data)
     {
         global $database;
-        file_put_contents("/tmp/ticket_debug_$data[ticket].txt", "RECEIVED POST DATA AGAIN:\n" . print_r($data, true));
+        $tcode = isset($data['ticket']) ? $data['ticket'] : 'new';
+        file_put_contents("/tmp/ticket_debug_$tcode.txt", "RECEIVED POST DATA AGAIN:\n" . print_r($data, true));
 
         if (empty($data['ccs']))
             $ccs = "";
@@ -59,20 +60,24 @@ class Ticket extends App
         else
             $notes = "";
 
-        // Fallback location mapping
+        // Automatic resolution of mapping based on Branch and Submitter
         $locationid = isset($data['locationid']) ? $data['locationid'] : 0;
         $branch_id = isset($data['branch_id']) ? $data['branch_id'] : 0;
         $submitter_id = isset($data['submitter_id']) ? $data['submitter_id'] : 0;
+        $clientid = isset($data['clientid']) ? $data['clientid'] : 0;
+        $departmentid = isset($data['departmentid']) ? $data['departmentid'] : 0;
 
-        if ($locationid == 0 && $branch_id != 0 && $submitter_id != 0) {
-            $mapped_loc = $database->get("locations", "id", ["AND" => ["branch_id" => $branch_id, "submitter_id" => $submitter_id]]);
-            if ($mapped_loc) {
-                $locationid = $mapped_loc;
+        // If we have branch and submitter, try to find the full mapping from locations table
+        if ($branch_id != 0 && $submitter_id != 0) {
+            $mapped_data = $database->get("locations", ["id", "clientid", "departmenId"], ["AND" => ["branch_id" => $branch_id, "submitter_id" => $submitter_id]]);
+            if ($mapped_data) {
+                if ($locationid == 0) $locationid = $mapped_data['id'];
+                if ($clientid == 0) $clientid = $mapped_data['clientid'];
+                if ($departmentid == 0) $departmentid = $mapped_data['departmenId'];
             }
         }
 
-        // Fallback client mapping
-        $clientid = isset($data['clientid']) ? $data['clientid'] : 0;
+        // Fallback for clientid based on Submitter Company if still 0
         if ($clientid == 0 && $submitter_id != 0) {
             $company_id = $database->get("submitters", "company_id", ["id" => $submitter_id]);
             if ($company_id) {
@@ -86,8 +91,7 @@ class Ticket extends App
             }
         }
 
-        // Department resolution from location
-        $departmentid = isset($data['departmentid']) ? $data['departmentid'] : 0;
+        // Fallback for departmentid from locationid if still 0
         if ($departmentid == 0 && $locationid != 0) {
             $mapped_dept = $database->get("locations", "departmenId", ["id" => $locationid]);
             if ($mapped_dept) {
@@ -170,37 +174,17 @@ class Ticket extends App
 
         $data['branch_id'] = isset($postdata['branch_id']) ? $postdata['branch_id'] : 0;
         $data['submitter_id'] = isset($postdata['submitter_id']) ? $postdata['submitter_id'] : 0;
+        // Mapping resolution handled in self::add($data) below
         $data['locationid'] = isset($postdata['locationid']) ? $postdata['locationid'] : 0;
+        $data['clientid'] = isset($postdata['clientid']) ? $postdata['clientid'] : 0;
+        $data['departmentid'] = isset($postdata['departmentid']) ? $postdata['departmentid'] : 0;
         $data['kendala'] = isset($postdata['kendala']) ? $postdata['kendala'] : '';
-
-        if ($data['locationid'] == 0 && $data['branch_id'] != 0 && $data['submitter_id'] != 0) {
-            $mapped_loc = $database->get("locations", "id", ["AND" => ["branch_id" => $data['branch_id'], "submitter_id" => $data['submitter_id']]]);
-            if ($mapped_loc) {
-                $data['locationid'] = $mapped_loc;
-            }
-        }
 
         $data['adminid'] = 0;
         $data['userid'] = 0;
         $data['assetid'] = 0;
         $data['projectid'] = 0;
         $data['ccs'] = "";
-
-        // Determine clientid dynamically based on Submitter Company mapping
-        $data['clientid'] = 0;
-        if ($data['submitter_id'] != 0) {
-            $company_id = $database->get("submitters", "company_id", ["id" => $data['submitter_id']]);
-            if ($company_id) {
-                // Determine OnTrack clientid based on Company Name
-                // since OnTrack's clients table stores the GFI/SRN company entities.
-                $company_name = $database->get("companies", "name", ["id" => $company_id]);
-                if ($company_name) {
-                    $client_id_val = $database->get("clients", "id", ["name" => $company_name]);
-                    if ($client_id_val)
-                        $data['clientid'] = $client_id_val;
-                }
-            }
-        }
 
         $data['email'] = $postdata['email'];
         $data['subject'] = $postdata['subject'];

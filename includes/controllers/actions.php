@@ -444,6 +444,22 @@ switch ($_POST['action']) {
 		$status = Attribute::deleteLocation($_POST['id']);
 		break;
 
+	// branches
+	case "addBranch":
+		isAuthorized("manageData");
+		$status = Attribute::addBranch($_POST);
+		break;
+
+	case "editBranch":
+		isAuthorized("manageData");
+		$status = Attribute::editBranch($_POST);
+		break;
+
+	case "deleteBranch":
+		isAuthorized("manageData");
+		$status = Attribute::deleteBranch($_POST['id']);
+		break;
+
 	// asset models
 	case "addModel":
 		isAuthorized("manageData");

@@ -534,30 +534,14 @@ if ($route == "submitticket") {
 	$branches = $database->select("branches", "*");
 	$submitters = $database->select("submitters", "*");
 
-	$locations_db = $database->select("locations", ["id", "branch_id", "submitter_id"], [
+	// Get mapping from locations table which now stores all relations
+	$locations_db = $database->select("locations", ["id", "branch_id", "submitter_id", "clientid", "departmenId"], [
 		"AND" => [
 			"branch_id[!]" => 0,
 			"submitter_id[!]" => 0
 		]
 	]);
 	$locations_json = json_encode($locations_db);
-
-	$client_mappings = [];
-	foreach ($submitters as $sub) {
-		if ($sub['company_id']) {
-			$comp_name = $database->get("companies", "name", ["id" => $sub['company_id']]);
-			if ($comp_name) {
-				$client_id_val = $database->get("clients", "id", ["name" => $comp_name]);
-				if ($client_id_val) {
-					$client_mappings[] = [
-						"submitter_id" => $sub['id'],
-						"client_id" => $client_id_val
-					];
-				}
-			}
-		}
-	}
-	$clients_json = json_encode($client_mappings);
 
 	$kendalas = ["JARINGAN", "APLIKASI", "MASTER DATA (ITEM/PRICING)", "HARDWARE"];
 }
@@ -1056,6 +1040,13 @@ if ($route == "inventory/attributes/locations") {
 		$locations = getTableFiltered("locations", "clientid", $liu['clientid']);
 	}
 	$pageTitle = __("Locations");
+}
+
+// BRANCHES
+if ($route == "inventory/attributes/branches") {
+	isAuthorized("manageData");
+	$branches = getTable("branches");
+	$pageTitle = __("Branches");
 }
 
 // SUPPLIERS

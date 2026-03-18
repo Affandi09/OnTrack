@@ -51,11 +51,21 @@ switch ($_GET['modal']) {
 
     case "locations/add":
         $clients = getTable("clients");
+        $branches = getTable("branches");
+        $submitters = getTable("submitters");
+        $departments = getTable("tickets_departments");
         break;
 
     case "locations/edit":
         $clients = getTable("clients");
+        $branches = getTable("branches");
+        $submitters = getTable("submitters");
+        $departments = getTable("tickets_departments");
         $location = getRowById("locations", $_GET['id']);
+        break;
+
+    case "branches/edit":
+        $branch = getRowById("branches", $_GET['id']);
         break;
 
     case "assetcategories/edit":
