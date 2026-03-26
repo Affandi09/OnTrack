@@ -243,8 +243,30 @@ class Ticket extends App
         }
 
         // update ticket status
-        if (isset($data['status']))
+        if (isset($data['status']) && $data['status'] != "") {
             self::updateStatus($data['ticketid'], $data['status']);
+        } else {
+            // AUTOMATION: Status change based on helpdesk replies
+            if ($peopleid > 0 && getSingleValue("people", "type", $peopleid) == "admin") {
+                $current_status = getSingleValue("tickets", "status", $data['ticketid']);
+                if ($current_status != "Closed") {
+                    $admin_replies_count = $database->count("tickets_replies", [
+                        "[>]people" => ["peopleid" => "id"]
+                    ], "tickets_replies.id", [
+                        "AND" => [
+                            "tickets_replies.ticketid" => $data['ticketid'],
+                            "people.type" => "admin"
+                        ]
+                    ]);
+
+                    if ($admin_replies_count == 1) {
+                        self::updateStatus($data['ticketid'], "Answered");
+                    } elseif ($admin_replies_count == 2) {
+                        self::updateStatus($data['ticketid'], "In Progress");
+                    }
+                }
+            }
+        }
 
         // EDIT REGGY
         if (isset($data['status'])) {
