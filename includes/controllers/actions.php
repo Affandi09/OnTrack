@@ -447,7 +447,7 @@ switch ($_POST['action']) {
 	// branches
 	case "addBranch":
 		isAuthorized("manageData");
-		$status = Attribute::addBranch($_POST);
+		$status = Attribute::addBranchFull($_POST);
 		break;
 
 	case "editBranch":

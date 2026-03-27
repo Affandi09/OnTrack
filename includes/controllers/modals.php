@@ -64,6 +64,12 @@ switch ($_GET['modal']) {
         $location = getRowById("locations", $_GET['id']);
         break;
 
+    case "branches/add":
+        $clients = getTable("clients");
+        $submitters = getTable("submitters");
+        $departments = getTable("tickets_departments");
+        break;
+
     case "branches/edit":
         $branch = getRowById("branches", $_GET['id']);
         break;

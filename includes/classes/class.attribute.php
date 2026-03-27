@@ -203,6 +203,34 @@ class Attribute extends App
 		}
 	}
 
+	public static function addBranchFull($data)
+	{
+		global $database;
+		// 1. Insert Branch
+		$lastid = $database->insert("branches", ["name" => $data['name']]);
+
+		if ($lastid == "0") {
+			return "11";
+		}
+
+		// 2. Insert Location
+		$locid = $database->insert("locations", [
+			"name" => $data['location_name'],
+			"clientid" => $data['clientid'],
+			"branch_id" => $lastid,
+			"submitter_id" => $data['submitter_id'],
+			"departmenId" => $data['departmenId']
+		]);
+
+		if ($locid == "0") {
+			logSystem("Branch Added but Location Failed - Branch ID: " . $lastid);
+			return "11";
+		} else {
+			logSystem("Branch and Location Added - Branch ID: " . $lastid . " | Location ID: " . $locid);
+			return "10";
+		}
+	}
+
 	public static function editBranch($data)
 	{
 		global $database;
