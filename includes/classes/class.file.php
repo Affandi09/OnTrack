@@ -15,7 +15,16 @@ class File extends App
 
 		for ($i = 0; $i < $total; $i++) {
 
+			// Reset status and emptyfilename for every file in the loop
+			$status = 9500;
+			$emptyfilename = false;
+
 			$targetdir = $scriptpath . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR;
+
+			// Auto-create uploads directory if it doesn't exist
+			if (!is_dir($targetdir)) {
+				mkdir($targetdir, 0755, true);
+			}
 
 			$nextfileid = $database->max("files", "id") + 1;
 
@@ -30,16 +39,22 @@ class File extends App
 				}
 			}
 
-			$filename = $prefix . "-" . basename($files["file"]["name"][$i]);
+			$originalName = basename($files["file"]["name"][$i]);
+			$filename = $prefix . "-" . $originalName;
+
 			if (empty($data['name'])) {
 				$emptyfilename = true;
-				$data['name'] = basename($files["file"]["name"][$i]);
+				$data['name'] = $originalName;
 			}
 
 			$targetfile = $targetdir . $filename;
 
+			// If file already exists, make filename unique with timestamp suffix instead of skipping
 			if (file_exists($targetfile)) {
-				$status = 9501;
+				$ext = pathinfo($originalName, PATHINFO_EXTENSION);
+				$basename = pathinfo($originalName, PATHINFO_FILENAME);
+				$filename = $prefix . "-" . $basename . "-" . time() . ($ext ? "." . $ext : "");
+				$targetfile = $targetdir . $filename;
 			}
 
 			if ($status == 9500) {
@@ -55,8 +70,11 @@ class File extends App
 						"file" => $filename
 					]);
 					$status = 9500;
-				} else
+				} else {
+					// Log error for debugging on production
+					error_log("[OnTrack] move_uploaded_file FAILED: tmp=" . $files["file"]["tmp_name"][$i] . " target=" . $targetfile . " | uploads_writable=" . (is_writable($targetdir) ? 'yes' : 'NO') . " | dir_exists=" . (is_dir($targetdir) ? 'yes' : 'NO'));
 					$status = 9502;
+				}
 			}
 
 			if ($emptyfilename) {

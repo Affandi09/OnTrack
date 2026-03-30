@@ -163,7 +163,14 @@ switch ($_POST['action']) {
 		break;
 
 	case "addTicketReply":
-		isAuthorized("manageTicket");
+		$ticket = getRowById("tickets", $_POST['ticketid']);
+
+		$isTicketOwner = ($ticket['userid'] == $liu['id'] || $ticket['email'] == $liu['email']);
+
+		if (!$isTicketOwner) {
+			isAuthorized("manageTicket");
+		}
+
 		$status = Ticket::addReply($_POST);
 		break;
 

@@ -295,21 +295,12 @@
                                                                                                 class="fa fa-<?php echo File::icon($file['file']); ?>"></i>
                                                                                         </div>
                                                                                         <div class="col-xs-9">
-                                                                                            <?php echo $file['name']; ?>
+                                                                                            <?php echo htmlspecialchars($file['name']); ?>
                                                                                         </div>
                                                                                         <div class="col-xs-2 text-right">
-                                                                                            <?php if (in_array("viewFiles", $perms)) { ?><a
-                                                                                                    href="#"
-                                                                                                    onClick='showM("?modal=files/view&reroute=tickets/manage&routeid=<?php echo $ticket['id']; ?>&id=<?php echo $file['id']; ?>&section=");return false'
-                                                                                                    class='btn-right text-dark'><i
-                                                                                                        class='fa fa-eye'></i></a>&nbsp;<?php } ?>
                                                                                             <a href="<?php echo "?qa=download&id=" . $file['id']; ?>"
                                                                                                 class='btn-right text-dark'><i
-                                                                                                    class='fa fa-download'></i></a>&nbsp;
-                                                                                            <a href="#"
-                                                                                                onClick='showM("?modal=files/delete&reroute=tickets/manage&routeid=<?php echo $ticket['id']; ?>&id=<?php echo $file['id']; ?>&section=");return false'
-                                                                                                class='btn-right text-red'><i
-                                                                                                    class='fa fa-trash-o'></i></a>
+                                                                                                    class='fa fa-download'></i></a>
                                                                                         </div>
                                                                                     </div>
 
