@@ -8,19 +8,28 @@
 switch($_GET['qa']) {
 
 	case "ticketClose":
-        Ticket::updateStatus($_GET['id'],"Closed");
-        header("Location:?route=".$_GET['reroute']."&id=".$_GET['routeid']);
-        break;
+		isAuthorized("manageTicket");
+		$ticket = getRowById("tickets", $_GET['id']);
+		isOwner($ticket['clientid']);
+		Ticket::updateStatus($_GET['id'], "Closed");
+		header("Location:?route=" . $_GET['reroute'] . "&id=" . $_GET['routeid']);
+		break;
 
 	case "ticketReopen":
-        Ticket::updateStatus($_GET['id'],"Reopened");
-        header("Location:?route=".$_GET['reroute']."&id=".$_GET['routeid']);
-        break;
+		isAuthorized("manageTicket");
+		$ticket = getRowById("tickets", $_GET['id']);
+		isOwner($ticket['clientid']);
+		Ticket::updateStatus($_GET['id'], "Reopened");
+		header("Location:?route=" . $_GET['reroute'] . "&id=" . $_GET['routeid']);
+		break;
 
 	case "ticketAssignToMe":
-        Ticket::assignTo($_GET['id'],$liu['id']);
-        header("Location:?route=".$_GET['reroute']."&id=".$_GET['routeid']);
-        break;
+		isAuthorized("manageTicket");
+		$ticket = getRowById("tickets", $_GET['id']);
+		isOwner($ticket['clientid']);
+		Ticket::assignTo($_GET['id'], $liu['id']);
+		header("Location:?route=" . $_GET['reroute'] . "&id=" . $_GET['routeid']);
+		break;
 
 	case "getTicketReply":
         echo getSingleValue("tickets_replies","message",$_GET['id']);
@@ -51,23 +60,34 @@ switch($_GET['qa']) {
 
     case "download":
         $file = getRowById("files",$_GET['id']);
+        if (empty($file)) {
+            echo "File record not found in database (id=" . intval($_GET['id']) . ").";
+            break;
+        }
         $targetfile = $scriptpath . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . $file['file'];
         if (file_exists($targetfile)) {
             header('Content-Description: File Transfer');
             header('Content-Type: application/octet-stream');
-            header('Content-Disposition: attachment; filename="' . $file['file'] . '"');
+            header('Content-Disposition: attachment; filename="' . basename($file['file']) . '"');
             header('Expires: 0');
             header('Cache-Control: must-revalidate');
             header('Pragma: public');
             header('Content-Length: ' . filesize($targetfile));
             readfile($targetfile);
             exit;
-            }
-        else echo _e("File does not exist.");
+        } else {
+            // Log for debugging: file exists in DB but not on disk
+            error_log("[OnTrack] File not found on disk: " . $targetfile . " | DB record file='" . $file['file'] . "' id=" . $file['id']);
+            echo _e("File does not exist.");
+        }
 	break;
 
 	case "show":
         $file = getRowById("files",$_GET['id']);
+        if (empty($file)) {
+            echo "File record not found in database.";
+            break;
+        }
         $targetfile = $scriptpath . DIRECTORY_SEPARATOR . "uploads" . DIRECTORY_SEPARATOR . $file['file'];
         if (file_exists($targetfile)) {
             $content = get_mime_content($file['file']);
@@ -75,8 +95,10 @@ switch($_GET['qa']) {
             header('Content-Length: ' . filesize($targetfile));
             readfile($targetfile);
             exit;
+        } else {
+            error_log("[OnTrack] File not found on disk: " . $targetfile . " | DB record file='" . $file['file'] . "' id=" . $file['id']);
+            echo _e("File does not exist.");
         }
-        else echo _e("File does not exist.");
 	break;
 
 

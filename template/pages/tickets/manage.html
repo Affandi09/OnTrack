@@ -111,7 +111,7 @@
 										</div>
 									</div>
 									<div class="col-md-5 col-xs-12 text-right">
-										<?php if ($ticket['status'] != "Closed") { ?>
+										<?php if ($isAdmin && $ticket['status'] != "Closed") { ?>
 											<a href="?qa=ticketClose&reroute=tickets/manage&routeid=<?php echo $ticket['id']; ?>&id=<?php echo $ticket['id']; ?>"
 												class="btn btn-default btn-flat"
 												style="border: 1px solid #dd4b39; color: #dd4b39; margin-right: 8px;">

@@ -506,10 +506,14 @@ if ($route == "tickets/all") {
 }
 
 if ($route == "tickets/manage") {
-	isAuthorized("manageTicket");
 	$ticket = getRowById("tickets", $_GET['id']);
 
-	isOwner($ticket['clientid']);
+	$isTicketOwner = ($ticket['userid'] == $liu['id'] || $ticket['email'] == $liu['email']);
+
+	if (!$isTicketOwner) {
+		isAuthorized("manageTicket");
+		isOwner($ticket['clientid']);
+	}
 
 	$replies = getTableFiltered("tickets_replies", "ticketid", $_GET['id'], "", "", "*", "id", "DESC");
 	$comments = getTableFiltered("comments", "ticketid", $_GET['id'], "", "", "*", "timestamp", "ASC");
@@ -561,6 +565,13 @@ if ($route == "checkticket") {
 		$ticket = false;
 		$error_message = __("No ticket code provided.");
 	}
+
+	// Initialize HTMLPurifier and washtml for rendering reply messages
+	$hpconfig = HTMLPurifier_Config::createDefault();
+	$hpconfig->set('HTML.AllowedAttributes', 'src, height, width, alt');
+	$hpconfig->set('URI.AllowedSchemes', array('http' => true, 'https' => true, 'mailto' => true, 'ftp' => true, 'nntp' => true, 'news' => true, 'callto' => true, 'data' => true));
+	$purifier = new HTMLPurifier($hpconfig);
+	require_once($scriptpath . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'washtml.php');
 }
 
 if ($route == "surveyticket") {
