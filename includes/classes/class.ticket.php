@@ -159,9 +159,32 @@ class Ticket extends App
             // log and return
             logSystem("Ticket Added - ID: " . $ticketid);
             $_SESSION['last_ticket_code'] = $random;
+
+            // Immediately trigger the email queue processor in a non-blocking background call
+            // This ensures emails are sent within seconds, not waiting for the browser's polling interval
+            self::triggerEmailQueue();
+
             return "10";
         }
 
+    }
+
+    // Fire-and-forget trigger: hits email_queue.php asynchronously so the web response
+    // is not blocked, and email goes out immediately instead of waiting for the next poll.
+    private static function triggerEmailQueue()
+    {
+        global $scriptpath;
+        $url = (isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? 'https' : 'http')
+            . '://' . ($_SERVER['HTTP_HOST'] ?? 'localhost')
+            . rtrim(dirname($_SERVER['SCRIPT_NAME'] ?? ''), '/\\') . '/crons/email_queue.php';
+
+        $ch = curl_init($url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_TIMEOUT_MS, 200);   // return immediately after sending
+        curl_setopt($ch, CURLOPT_CONNECTTIMEOUT_MS, 200);
+        curl_setopt($ch, CURLOPT_NOSIGNAL, 1);        // required for ms-level timeouts
+        @curl_exec($ch);
+        curl_close($ch);
     }
 
     public static function addPublicTicket($postdata)
