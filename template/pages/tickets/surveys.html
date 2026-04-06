@@ -2,12 +2,20 @@
     <section class="content-header">
         <h1>
             <?php _e('Survey Kepuasan'); ?>
-            <small><?php _e('Hasil feedback dari pengguna'); ?></small>
+            <small>
+                <?php _e('Hasil feedback dari pengguna'); ?>
+            </small>
         </h1>
         <ol class="breadcrumb">
-            <li><a href="?route=dashboard"><i class="fa fa-dashboard"></i> <?php _e('Home'); ?></a></li>
-            <li><a href="?route=tickets/all"><?php _e('Tickets'); ?></a></li>
-            <li class="active"><?php _e('Survey Kepuasan'); ?></li>
+            <li><a href="?route=dashboard"><i class="fa fa-dashboard"></i>
+                    <?php _e('Home'); ?>
+                </a></li>
+            <li><a href="?route=tickets/all">
+                    <?php _e('Tickets'); ?>
+                </a></li>
+            <li class="active">
+                <?php _e('Survey Kepuasan'); ?>
+            </li>
         </ol>
     </section>
 
@@ -17,7 +25,9 @@
             <div class="col-xs-12">
                 <div class="box box-primary">
                     <div class="box-header with-border">
-                        <h3 class="box-title"><?php _e('Daftar Hasil Survey'); ?></h3>
+                        <h3 class="box-title">
+                            <?php _e('Daftar Hasil Survey'); ?>
+                        </h3>
                     </div>
                     <!-- /.box-header -->
                     <div class="box-body">
@@ -25,16 +35,26 @@
                             <table id="dataTablesFullDesc" class="table table-bordered table-striped table-hover">
                                 <thead>
                                     <tr>
-                                        <th><?php _e('Tanggal'); ?></th>
-                                        <th><?php _e('Nomor Tiket'); ?></th>
-                                        <th><?php _e('Nama Lengkap'); ?></th>
-                                        <th><?php _e('Divisi'); ?></th>
+                                        <th>
+                                            <?php _e('Tanggal'); ?>
+                                        </th>
+                                        <th>
+                                            <?php _e('Nomor Tiket'); ?>
+                                        </th>
+                                        <th>
+                                            <?php _e('Nama Lengkap'); ?>
+                                        </th>
+                                        <th>
+                                            <?php _e('Divisi'); ?>
+                                        </th>
                                         <th class="text-center">Q1</th>
                                         <th class="text-center">Q2</th>
                                         <th class="text-center">Q3</th>
                                         <th class="text-center">Q4</th>
                                         <th class="text-center">Q5</th>
-                                        <th class="text-center"><?php _e('Rata-rata'); ?></th>
+                                        <th class="text-center">
+                                            <?php _e('Rata-rata'); ?>
+                                        </th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -45,29 +65,46 @@
                                         elseif($avg >= 3) $color = "yellow";
                                         elseif($avg > 0) $color = "red";
                                     ?>
-                                        <tr>
-                                            <td><?php echo $survey['timestamp']; ?></td>
-                                            <td>
-                                                <a href="?route=tickets/manage&id=<?php echo $survey['ticket_id']; ?>">
-                                                    #<?php echo $survey['ticket_code']; ?>
-                                                </a>
-                                            </td>
-                                            <td>
-                                                <?php echo htmlspecialchars($survey['name']); ?><br>
-                                                <small class="text-muted"><?php echo htmlspecialchars($survey['email']); ?></small>
-                                            </td>
-                                            <td><?php echo htmlspecialchars($survey['department_name']); ?></td>
-                                            <td class="text-center"><strong><?php echo $survey['q1']; ?></strong></td>
-                                            <td class="text-center"><strong><?php echo $survey['q2']; ?></strong></td>
-                                            <td class="text-center"><strong><?php echo $survey['q3']; ?></strong></td>
-                                            <td class="text-center"><strong><?php echo $survey['q4']; ?></strong></td>
-                                            <td class="text-center"><strong><?php echo $survey['q5']; ?></strong></td>
-                                            <td class="text-center">
-                                                <span class="label bg-<?php echo $color; ?>" style="font-size: 13px;">
-                                                    <?php echo number_format($avg, 1); ?> / 5.0
-                                                </span>
-                                            </td>
-                                        </tr>
+                                    <tr>
+                                        <td>
+                                            <?php echo $survey['timestamp']; ?>
+                                        </td>
+                                        <td>
+                                            <a href="?route=tickets/manage&id=<?php echo $survey['ticket_id']; ?>">
+                                                #
+                                                <?php echo $survey['ticket_code']; ?>
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <?php echo htmlspecialchars($survey['name']); ?><br>
+                                            <small class="text-muted">
+                                                <?php echo htmlspecialchars($survey['email']); ?>
+                                            </small>
+                                        </td>
+                                        <td>
+                                            <?php echo htmlspecialchars($survey['department_name']); ?>
+                                        </td>
+                                        <td class="text-center"><strong>
+                                                <?php echo $survey['q1']; ?>
+                                            </strong></td>
+                                        <td class="text-center"><strong>
+                                                <?php echo $survey['q2']; ?>
+                                            </strong></td>
+                                        <td class="text-center"><strong>
+                                                <?php echo $survey['q3']; ?>
+                                            </strong></td>
+                                        <td class="text-center"><strong>
+                                                <?php echo $survey['q4']; ?>
+                                            </strong></td>
+                                        <td class="text-center"><strong>
+                                                <?php echo $survey['q5']; ?>
+                                            </strong></td>
+                                        <td class="text-center">
+                                            <span class="label bg-<?php echo $color; ?>" style="font-size: 13px;">
+                                                <?php echo number_format($avg, 1); ?> / 5.0
+                                            </span>
+                                        </td>
+                                    </tr>
                                     <?php } ?>
                                 </tbody>
                             </table>
@@ -76,18 +113,30 @@
                     <!-- /.box-body -->
                 </div>
                 <!-- /.box -->
-                
+
                 <div class="box box-info">
                     <div class="box-header with-border">
-                        <h3 class="box-title"><i class="fa fa-info-circle"></i> <?php _e('Keterangan Pertanyaan'); ?></h3>
+                        <h3 class="box-title"><i class="fa fa-info-circle"></i>
+                            <?php _e('Keterangan Pertanyaan'); ?>
+                        </h3>
                     </div>
                     <div class="box-body">
                         <ul class="list-unstyled" style="line-height: 2;">
-                            <li><strong>Q1:</strong> <?php _e('Bagaimana penilaian Anda terhadap kecepatan respon kami?'); ?></li>
-                            <li><strong>Q2:</strong> <?php _e('Apakah solusi yang diberikan sudah sesuai dengan kendala Anda?'); ?></li>
-                            <li><strong>Q3:</strong> <?php _e('Bagaimana kualitas komunikasi penanganan kendala tersebut?'); ?></li>
-                            <li><strong>Q4:</strong> <?php _e('Bagaimana penilaian Anda terhadap keramahan petugas kami?'); ?></li>
-                            <li><strong>Q5:</strong> <?php _e('Seberapa puas Anda terhadap hasil penanganan tiket ini?'); ?></li>
+                            <li><strong>Q1:</strong>
+                                <?php _e('Apakah kendala yang disampaikan di Web IT Track atau Aplikasi Chat (Whatsapp) telah ditangani dengan baik?'); ?>
+                            </li>
+                            <li><strong>Q2:</strong>
+                                <?php _e('Apakah kendala yang disampaikan di Web IT Track atau Aplikasi Chat (Whatsapp) telah ditanggapi dengan cepat?'); ?>
+                            </li>
+                            <li><strong>Q3:</strong>
+                                <?php _e('Seberapa cepat penanganan yang dilakukan oleh IT? Berdasarkan kompleksitas kendala yang dihadapi?'); ?>
+                            </li>
+                            <li><strong>Q4:</strong>
+                                <?php _e('Berdasarkan indikator berikut, seberapa puas kinerja dan penyelesaian masalah oleh Departemen IT Infrastruktur dan Cyber Security?'); ?>
+                            </li>
+                            <li><strong>Q5:</strong>
+                                <?php _e('Apakah Anda akan merekomendasikan penggunaan Web IT Track atau Aplikasi Chat (Whatsapp) kepada rekan kerja Anda?'); ?>
+                            </li>
                         </ul>
                     </div>
                 </div>
