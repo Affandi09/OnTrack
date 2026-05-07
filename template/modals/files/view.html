@@ -1,30 +1,55 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h4 class="modal-title"><?php echo $file['name']; ?> <small><?php echo $file['file']; ?></small></h4>
+    <h4 class="modal-title"><?php echo $file['name']; ?></h4>
 </div>
 <div class="modal-body">
+    <link rel="stylesheet" href="template/assets/modern-kb.css">
+    
+    <div class="preview-container">
+        <?php if (strpos($mimetype, 'image/') !== false) { ?>
+            <img class="img-responsive center-block" src="?qa=show&id=<?php echo $file['id']; ?>" style="max-height: 80vh;">
+        
+        <?php } elseif ($mimetype == 'application/pdf') { ?>
+            <embed src="?qa=show&id=<?php echo $file['id']; ?>" type="application/pdf" width="100%" height="600px" />
+        
+        <?php } elseif (strpos($mimetype, 'video/') !== false) { ?>
+            <video width="100%" controls style="max-height: 80vh;">
+                <source src="?qa=show&id=<?php echo $file['id']; ?>" type="<?php echo $mimetype; ?>">
+                Your browser does not support the video tag.
+            </video>
+        
+        <?php } elseif (strpos($mimetype, 'audio/') !== false) { ?>
+            <div class="preview-placeholder">
+                <i class="fa fa-music"></i>
+                <audio controls style="width: 100%;">
+                    <source src="?qa=show&id=<?php echo $file['id']; ?>" type="<?php echo $mimetype; ?>">
+                    Your browser does not support the audio element.
+                </audio>
+            </div>
 
-    <div class="row">
-        <div class="col-md-12">
-            <?php if (strpos($mimetype, 'image/') !== false) { ?>
-                <img class="img-responsive" src="?qa=download&id=<?php echo $file['id']; ?>">
-            <?php } else { ?>
-                <p class="alert alert-warning alert-dismissible"><?php _e('This file cannot be viewed in a web browser. Please download on your PC to open.'); ?></p>
-            <?php } ?>
-        </div>
-
+        <?php } else { ?>
+            <div class="preview-placeholder">
+                <i class="fa fa-<?php echo File::icon($file['file']); ?>"></i>
+                <h4><?php _e('Preview Unavailable'); ?></h4>
+                <p class="text-muted"><?php _e('This file format cannot be previewed directly. Please download it to view.'); ?></p>
+                <div style="margin-top: 20px;">
+                    <a href="?qa=download&id=<?php echo $file['id']; ?>" class="btn btn-primary">
+                        <i class="fa fa-download"></i> <?php _e('Download File'); ?>
+                    </a>
+                </div>
+            </div>
+        <?php } ?>
     </div>
 
-
-
     <input type="hidden" name="id" value="<?php echo $_GET['id']; ?>">
-
-    <input type="hidden" name="route" value="<?php echo $_GET['reroute']; ?>">
-    <input type="hidden" name="routeid" value="<?php echo $_GET['routeid']; ?>">
-    <input type="hidden" name="section" value="<?php if(isset($_GET['section'])) echo $_GET['section']; else echo ""; ?>">
 </div>
 <div class="modal-footer">
-    <?php if(in_array("downloadFile",$perms)) { ?><a href="<?php echo "?qa=download&id=" . $file['id']; ?>" class='btn btn-primary'><i class='fa fa-download'></i> <?php _e('Download'); ?></a><?php } ?>
-    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> <?php _e('Close'); ?></button>
-
+    <?php if(in_array("downloadFile",$perms)) { ?>
+        <a href="?qa=download&id=<?php echo $file['id']; ?>" class='btn btn-primary'>
+            <i class='fa fa-download'></i> <?php _e('Download'); ?>
+        </a>
+    <?php } ?>
+    <button type="button" class="btn btn-default" data-dismiss="modal">
+        <i class="fa fa-times"></i> <?php _e('Close'); ?>
+    </button>
 </div>

@@ -124,6 +124,8 @@ function get_mime_content($filename)
 
 		// audio/video
 		'mp3' => 'audio/mpeg',
+		'mp4' => 'video/mp4',
+		'webm' => 'video/webm',
 		'qt' => 'video/quicktime',
 		'mov' => 'video/quicktime',
 
@@ -136,9 +138,12 @@ function get_mime_content($filename)
 
 		// ms office
 		'doc' => 'application/msword',
+		'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 		'rtf' => 'application/rtf',
 		'xls' => 'application/vnd.ms-excel',
+		'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 		'ppt' => 'application/vnd.ms-powerpoint',
+		'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 
 	);
 

@@ -13,8 +13,17 @@ class Kb extends App {
             "categoryid" => $data['categoryid'],
             "clients" => $clients,
             "name" => $data['name'],
-            "content" => $data['content']
+            "content" => $data['content'],
+            "video_link" => $data['video_link']
             ]);
+
+        if (isset($_FILES["file"]["name"][0])) {
+            if (!empty($_FILES["file"]["name"][0])) {
+                $file_data = array();
+                $file_data['kbarticleid'] = $lastid;
+                File::upload($file_data, $_FILES);
+            }
+        }
 
     	if ($lastid == "0") { return "11"; } else { logSystem("Knowledge Base Article Added - ID: " . $lastid); return "10"; }
 
@@ -28,9 +37,18 @@ class Kb extends App {
             "categoryid" => $data['categoryid'],
             "clients" => $clients,
             "name" => $data['name'],
-            "content" => $data['content']
+            "content" => $data['content'],
+            "video_link" => $data['video_link']
 
             ], [ "id" => $data['id'] ]);
+
+        if (isset($_FILES["file"]["name"][0])) {
+            if (!empty($_FILES["file"]["name"][0])) {
+                $file_data = array();
+                $file_data['kbarticleid'] = $data['id'];
+                File::upload($file_data, $_FILES);
+            }
+        }
 
     	logSystem("Knowledge Base Article Edited - ID: " . $data['id']);
     	return "20";
@@ -39,6 +57,12 @@ class Kb extends App {
 
     public static function delete($id) {
     	global $database;
+
+        // Delete associated files
+        $files = $database->select("files", "*", ["kbarticleid" => $id]);
+        foreach ($files as $file) {
+            File::delete($file['id']);
+        }
 
         $database->delete("kb_articles", [ "id" => $id ]);
 
