@@ -132,3 +132,88 @@ function showM(url) {
 function goBack() {
     window.history.back()
 }
+
+// Global Upload Progress Handler
+$(document).on('submit', 'form', function(e) {
+    if (e.isDefaultPrevented()) return; // Skip if other validation failed
+    
+    var $form = $(this);
+    var files = $form.find('input[type="file"]').get();
+    var hasFiles = false;
+    
+    for (var i = 0; i < files.length; i++) {
+        if (files[i].files.length > 0) {
+            hasFiles = true;
+            break;
+        }
+    }
+
+    if (hasFiles) {
+        e.preventDefault();
+        
+        // Prepare FormData
+        var formData = new FormData(this);
+        
+        // Show Swal Loading with Progress bar
+        Swal.fire({
+            title: 'Uploading...',
+            html: '<div class="progress" style="height: 25px; border-radius: 12px; margin-top: 20px; background: #f1f5f9; overflow: hidden;">' +
+                  '<div id="upload-progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%; transition: width 0.3s ease; line-height: 25px; font-weight: bold; background-color: #3e81f1;">' +
+                  '0%' +
+                  '</div></div>' +
+                  '<div id="upload-status" style="margin-top: 15px; font-size: 14px; color: #64748b; font-weight: 500;">Starting upload...</div>',
+            showConfirmButton: false,
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                // Swal.showLoading(); // We use our own progress bar
+            }
+        });
+
+        // Use XHR for progress tracking
+        var xhr = new XMLHttpRequest();
+        xhr.open('POST', $form.attr('action') || window.location.href, true);
+        
+        xhr.upload.onprogress = function(event) {
+            if (event.lengthComputable) {
+                var percentComplete = Math.round((event.loaded / event.total) * 100);
+                $('#upload-progress-bar').css('width', percentComplete + '%').text(percentComplete + '%').attr('aria-valuenow', percentComplete);
+                
+                var loadedMB = (event.loaded / 1024 / 1024).toFixed(1);
+                var totalMB = (event.total / 1024 / 1024).toFixed(1);
+                $('#upload-status').text('Uploaded ' + loadedMB + 'MB of ' + totalMB + 'MB');
+                
+                if (percentComplete === 100) {
+                    $('#upload-status').text('Processing on server... Please wait.');
+                }
+            }
+        };
+
+        xhr.onload = function() {
+            if (xhr.status >= 200 && xhr.status < 300) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Upload Complete!',
+                    text: 'Process finished successfully.',
+                    timer: 1000,
+                    showConfirmButton: false
+                }).then(() => {
+                    // Redirect to the URL the server intended (XHR follows redirects, so responseURL is the final target)
+                    window.location.href = xhr.responseURL || window.location.href;
+                });
+            } else {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Upload Failed',
+                    text: 'The server responded with an error (' + xhr.status + ').'
+                });
+            }
+        };
+
+        xhr.onerror = function() {
+            Swal.fire('Error', 'A network error occurred during the upload.', 'error');
+        };
+
+        xhr.send(formData);
+    }
+});

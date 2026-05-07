@@ -126,7 +126,17 @@
                                                 <?php echo $log['subject']; ?>
                                             </td>
                                             <td>
-                                                <?php echo substr(strip_tags($log['message']), 0, 150) . "..."; ?>
+                                                <span class="text-muted" style="font-size:12px;">
+                                                    <?php echo htmlspecialchars(substr(strip_tags($log['message']), 0, 80)) . (strlen(strip_tags($log['message'])) > 80 ? '...' : ''); ?>
+                                                </span>
+                                                <br>
+                                                <a href="#" class="btn btn-xs btn-default btn-view-email-log" style="margin-top:4px;"
+                                                   data-message="<?php echo htmlspecialchars($log['message']); ?>"
+                                                   data-to="<?php echo htmlspecialchars($log['to']); ?>"
+                                                   data-subject="<?php echo htmlspecialchars($log['subject']); ?>"
+                                                   data-date="<?php echo htmlspecialchars($log['timestamp']); ?>">
+                                                    <i class="fa fa-eye"></i> <?php _e('View'); ?>
+                                                </a>
                                             </td>
                                         </tr>
                                         <?php } ?>
@@ -183,3 +193,60 @@
         </div>
     </section><!-- /.content -->
 </aside><!-- /.right-side -->
+
+<!-- Modal: Email Log Detail -->
+<div class="modal fade" id="emailLogModal" tabindex="-1" role="dialog" aria-labelledby="emailLogModalLabel">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header" style="background:#f4f6f9; border-bottom:1px solid #dee2e6;">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <h4 class="modal-title" id="emailLogModalLabel">
+                    <i class="fa fa-envelope-o"></i> <?php _e('Email Detail'); ?>
+                </h4>
+            </div>
+            <div class="modal-body" style="padding:0;">
+                <!-- Meta info bar -->
+                <div style="background:#f8f9fa; padding:12px 18px; border-bottom:1px solid #dee2e6; font-size:13px; color:#555;">
+                    <div><strong><?php _e('To'); ?>:</strong> <span id="emailLogTo"></span></div>
+                    <div style="margin-top:4px;"><strong><?php _e('Subject'); ?>:</strong> <span id="emailLogSubject"></span></div>
+                    <div style="margin-top:4px;"><strong><?php _e('Date'); ?>:</strong> <span id="emailLogDate"></span></div>
+                </div>
+                <!-- Rendered email body -->
+                <div style="padding:18px;">
+                    <iframe id="emailLogFrame"
+                            style="width:100%; min-height:480px; border:1px solid #dee2e6; border-radius:4px; background:#fff;"
+                            frameborder="0"
+                            sandbox="allow-same-origin"></iframe>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><?php _e('Close'); ?></button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+$(document).on('click', '.btn-view-email-log', function(e) {
+    e.preventDefault();
+    var msg     = $(this).data('message');
+    var to      = $(this).data('to');
+    var subject = $(this).data('subject');
+    var date    = $(this).data('date');
+
+    $('#emailLogTo').text(to);
+    $('#emailLogSubject').text(subject);
+    $('#emailLogDate').text(date);
+
+    // Write full HTML into iframe so styles are isolated
+    var frame = document.getElementById('emailLogFrame');
+    var doc   = frame.contentDocument || frame.contentWindow.document;
+    doc.open();
+    doc.write('<!DOCTYPE html><html><head><meta charset="utf-8"><style>body{font-family:Arial,sans-serif;font-size:14px;padding:12px;color:#212529;}table{border-collapse:collapse;width:100%;}td,th{padding:6px 10px;}a{color:#0d6efd;}</style></head><body>' + msg + '</body></html>');
+    doc.close();
+
+    $('#emailLogModal').modal('show');
+});
+</script>

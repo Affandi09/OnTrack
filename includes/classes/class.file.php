@@ -57,6 +57,11 @@ class File extends App
 				$targetfile = $targetdir . $filename;
 			}
 
+			// File size limit check (5MB)
+			if ($files["file"]["size"][$i] > 5 * 1024 * 1024) {
+				$status = 9505; // New status code for file too large
+			}
+
 			if ($status == 9500) {
 				if (move_uploaded_file($files["file"]["tmp_name"][$i], $targetfile)) {
 					$database->insert("files", [
@@ -64,6 +69,7 @@ class File extends App
 						"projectid" => isset($data['projectid']) ? $data['projectid'] : 0,
 						"assetid" => isset($data['assetid']) ? $data['assetid'] : 0,
 						"ticketreplyid" => isset($data['ticketreplyid']) ? $data['ticketreplyid'] : 0,
+						"kbarticleid" => isset($data['kbarticleid']) ? $data['kbarticleid'] : 0,
 						"forumtopicid" => isset($data['forumtopicid']) ? $data['forumtopicid'] : 0,
 						"forumreplyid" => isset($data['forumreplyid']) ? $data['forumreplyid'] : 0,
 						"name" => $data['name'],

@@ -124,6 +124,8 @@ function get_mime_content($filename)
 
 		// audio/video
 		'mp3' => 'audio/mpeg',
+		'mp4' => 'video/mp4',
+		'webm' => 'video/webm',
 		'qt' => 'video/quicktime',
 		'mov' => 'video/quicktime',
 
@@ -136,9 +138,12 @@ function get_mime_content($filename)
 
 		// ms office
 		'doc' => 'application/msword',
+		'docx' => 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
 		'rtf' => 'application/rtf',
 		'xls' => 'application/vnd.ms-excel',
+		'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
 		'ppt' => 'application/vnd.ms-powerpoint',
+		'pptx' => 'application/vnd.openxmlformats-officedocument.presentationml.presentation',
 
 	);
 
@@ -734,10 +739,8 @@ function sendEmailNow($to, $subject, $message, $clientid = "0", $peopleid = "0",
 	$mail->CharSet = "UTF-8";
 	if (getConfigValue("email_smtp_enable") == "true") {
 		$mail->isSMTP();
-		$mail->SMTPDebug = 3;
-		$mail->Debugoutput = function ($str, $level) {
-			file_put_contents(__DIR__ . '/../smtp_debug.log', date('Y-m-d H:i:s') . " [Level $level] $str\n", FILE_APPEND);
-		};
+		$mail->SMTPDebug = 0; // Disabled for performance; set to 2 temporarily for debugging only
+		$mail->SMTPKeepAlive = true; // Reuse SMTP connection across multiple emails (no reconnect per email)
 		if (getConfigValue("email_smtp_port") == "465") {
 			$mail->Host = "ssl://" . getConfigValue("email_smtp_host");
 			// bypass SMTPSecure kalau uda pake ssl://

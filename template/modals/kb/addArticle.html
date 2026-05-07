@@ -1,69 +1,183 @@
-<div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title"><?php _e('Create New Article'); ?></h4></div>
+<div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+            aria-hidden="true">&times;</span></button>
+    <h4 class="modal-title">
+        <?php _e('Create New Article'); ?>
+    </h4>
+</div>
 <div class="modal-body">
+    <link rel="stylesheet" href="template/assets/modern-kb.css">
 
-    <div class="row">
-        <div class="col-md-8">
-            <div class="form-group">
-                <label for="name"><?php _e('Name'); ?></label>
-                <input type="text" class="form-control" id="name" name="name" required>
+    <form role="form" method="post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-8">
+                <div class="form-group">
+                    <label class="kb-form-label" for="name">
+                        <?php _e('Article Name'); ?>
+                    </label>
+                    <input type="text" class="form-control kb-input" id="name" name="name"
+                        placeholder="<?php _e('Enter article title...'); ?>" required>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label class="kb-form-label" for="categoryid">
+                        <?php _e('Category'); ?>
+                    </label>
+                    <select class="form-control select2 kb-input" id="categoryid" name="categoryid" style="width: 100%;">
+                        <option value="0">
+                            <?php _e('[ROOT]'); ?>
+                        </option>
+                        <?php foreach($kbcategories as $category) { ?>
+                        <option value="<?php echo $category['id']; ?>" <?php if($_GET['routeid']==$category['id'])
+                            echo "selected" ?>>
+                            <?php echo $category['name']; ?>
+                        </option>
+                        <?php } ?>
+                    </select>
+                </div>
             </div>
         </div>
 
-        <div class="col-md-4">
-            <div class="form-group">
-                <label for="categoryid"><?php _e('Category'); ?></label>
-                <select class="form-control select2" id="categoryid" name="categoryid" style="width: 100%;">
-                    <option value="0"><?php _e('[ROOT]'); ?></option>
+        <div class="form-group">
+            <label class="kb-form-label" for="clients">
+                <?php _e('Target Audience (Clients)'); ?>
+            </label>
+            <select class="form-control select2tags kb-input" id="clients" name="clients[]" style="width: 100%;" multiple>
+                <option value="0" selected>
+                    <?php _e('ALL CLIENTS'); ?>
+                </option>
+                <?php foreach($clients as $client) { ?>
+                <option value="<?php echo $client['id']; ?>">
+                    <?php echo $client['name']; ?>
+                </option>
+                <?php } ?>
+            </select>
+            <p class="help-block text-muted" style="font-size: 11px;">
+                <?php _e('Select specific clients or leave as ALL CLIENTS.'); ?>
+            </p>
+        </div>
 
-                    <?php foreach($kbcategories as $category) { ?>
-                        <option value="<?php echo $category['id']; ?>" <?php if($_GET['routeid'] == $category['id']) echo "selected" ?>><?php echo $category['name']; ?></option>
-                    <?php } ?>
+        <div class="form-group">
+            <label class="kb-form-label" for="content">
+                <?php _e('Article Content'); ?>
+            </label>
+            <textarea class="form-control summernote2" id="content" name="content"></textarea>
+        </div>
 
-                </select>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label class="kb-form-label" for="video_link">
+                        <?php _e('Video Link / External Resource'); ?>
+                    </label>
+                    <div class="input-group">
+                        <span class="input-group-addon"
+                            style="background: #f8fafc; border-radius: 10px 0 0 10px; border-color: var(--kb-card-border);"><i
+                                class="fa fa-link"></i></span>
+                        <input type="text" class="form-control kb-input" id="video_link" name="video_link"
+                            style="border-radius: 0 10px 10px 0 !important;" placeholder="https://drive.google.com/...">
+                    </div>
+                    <p class="help-block text-muted" style="font-size: 11px;">
+                        <?php _e('Optional: Link to a video or file on Google Drive.'); ?>
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
 
+        <div class="form-group" style="margin-top: 10px;">
+            <label class="kb-form-label">
+                <?php _e('Attachments'); ?>
+            </label>
+            <div class="kb-attachments-section">
+                <div id="file-inputs">
+                    <div class="file-input-group" style="display: flex; margin-bottom: 12px; gap: 10px;">
+                        <input type="file" name="file[]" class="form-control kb-input file-input" style="flex: 1;">
+                    </div>
+                </div>
+                <button type="button" class="btn btn-sm btn-default" id="add-file-btn"
+                    style="border-radius: 8px; font-weight: 600;">
+                    <i class="fa fa-plus-circle" style="color: var(--kb-primary);"></i>
+                    <?php _e('Add Another Attachment'); ?>
+                </button>
+                <p class="help-block text-muted" style="margin-top: 10px; font-size: 11px;"><i
+                        class="fa fa-info-circle"></i>
+                    <?php _e('Max file size: 50MB per file.'); ?>
+                </p>
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label for="clients"><?php _e('Clients'); ?></label>
-        <select class="form-control select2tags" id="clients" name="clients[]" style="width: 100%;" multiple>
-            <option value="0" selected><?php _e('ALL CLIENTS'); ?></option>
-            <?php foreach($clients as $client) { ?>
-                <option value="<?php echo $client['id']; ?>"><?php echo $client['name']; ?></option>
-            <?php } ?>
-        </select>
-        <p class="help-block"><?php _e('Leave empty to hide.'); ?></p>
-    </div>
-
-    <div class="form-group">
-        <label for="content" class="control-label"><?php _e('Message'); ?></label>
-        <textarea class="form-control summernote2" id="content" name="content"></textarea>
-    </div>
-
-    <input type="hidden" name="action" value="addKB">
-    <input type="hidden" name="route" value="<?php echo $_GET['reroute']; ?>">
-    <input type="hidden" name="routeid" value="<?php echo $_GET['routeid']; ?>">
+        <input type="hidden" name="action" value="addKB">
+        <input type="hidden" name="route" value="kb">
+        <input type="hidden" name="routeid" value="<?php echo $_GET['routeid']; ?>">
+    </form>
 
 </div>
 <div class="modal-footer">
-    <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-times"></i> <?php _e('Cancel'); ?></button>
-    <button type="submit" class="btn btn-primary"><i class="fa fa-check"></i> <?php _e('Create'); ?></button>
+    <button type="button" class="btn btn-default" data-dismiss="modal" style="border-radius: 10px; font-weight: 600;"><i
+            class="fa fa-times"></i>
+        <?php _e('Cancel'); ?>
+    </button>
+    <button type="submit" class="btn btn-primary" style="border-radius: 10px; font-weight: 700; padding: 8px 25px;"><i
+            class="fa fa-check"></i>
+        <?php _e('Create Article'); ?>
+    </button>
 </div>
 
 <script type="text/javascript">
-
-        $(document).ready(function() {
-
-
-            $('.summernote2').summernote({height: 300});
-            $(".select2").select2();
-
-            $(function() { $(".select2tags").select2({
-                tags: true
-            }); });
-
+    $(document).ready(function () {
+        $('.summernote2').summernote({
+            height: 250,
+            dialogsInBody: true,
+            toolbar: [
+                ['style', ['style', 'bold', 'italic', 'underline', 'clear']],
+                ['font', ['strikethrough']],
+                ['color', ['color']],
+                ['para', ['ul', 'ol', 'paragraph']],
+                ['insert', ['link', 'table', 'hr']],
+                ['view', ['fullscreen', 'codeview', 'help']]
+            ]
         });
 
+        $(".select2").select2();
+        $(".select2tags").select2({ tags: true });
 
+        // Dynamic add multiple file attachments
+        $("#add-file-btn").click(function () {
+            var newInput = $('<div class="file-input-group" style="display: flex; margin-bottom: 12px; gap: 10px;">' +
+                '<input type="file" name="file[]" class="form-control kb-input file-input" style="flex: 1;">' +
+                '<button type="button" class="btn btn-danger remove-file-btn" style="width: 42px; border-radius: 10px;"><i class="fa fa-trash"></i></button>' +
+                '</div>');
+            $("#file-inputs").append(newInput);
+        });
+
+        $(document).on("click", ".remove-file-btn", function () {
+            $(this).closest(".file-input-group").remove();
+        });
+
+        // File size validation
+        $('form').on('submit', function (e) {
+            var maxSize = 50 * 1024 * 1024; // 50MB
+            var tooLarge = false;
+
+            $('.file-input').each(function () {
+                if (this.files && this.files[0]) {
+                    if (this.files[0].size > maxSize) {
+                        tooLarge = true;
+                    }
+                }
+            });
+
+            if (tooLarge) {
+                Swal.fire({
+                    title: '<?php _e("Error"); ?>',
+                    text: '<?php _e("One or more files are larger than 50MB. Please upload smaller files."); ?>',
+                    icon: 'error',
+                    confirmButtonColor: '#d33'
+                });
+                e.preventDefault();
+                return false;
+            }
+        });
+    });
 </script>

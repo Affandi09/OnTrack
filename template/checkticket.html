@@ -129,12 +129,43 @@
                 </div>
 
                 <?php if ($ticket['status'] == 'Closed' && !$surveyExists) { ?>
-                    <div style="margin-top: 20px;">
-                        <a href="?route=surveyticket&id=<?php echo $ticket['ticket']; ?>"
-                            class="btn btn-primary btn-block btn-lg btn-rating">
-                            <i class="fa fa-star" style="margin-right: 8px;"></i> <?php _e('Beri Survey Kepuasan'); ?>
-                        </a>
+                    <div style="margin-top: 25px;">
+                        <div class="tooltip-wrapper" style="position: relative;">
+                            <!-- Tooltip Message -->
+                            <div id="surveyTooltip" class="status-tooltip" style="display: none;">
+                                <?php _e('Bantu kami meningkatkan layanan dengan mengisi survey singkat ini!'); ?>
+                                <div class="tooltip-arrow"></div>
+                            </div>
+
+                            <a href="?route=surveyticket&id=<?php echo $ticket['ticket']; ?>" id="surveyBtn"
+                                class="btn btn-primary btn-block btn-lg btn-rating" style="position: relative; overflow: visible;">
+                                <i class="fa fa-star" style="margin-right: 8px;"></i> <?php _e('Beri Survey Kepuasan'); ?>
+
+                                <!-- Small Badge indicator -->
+                                <span id="surveyBadge" class="mini-badge" style="display: none;">
+                                    <i class="fa fa-circle"></i>
+                                </span>
+                            </a>
+                        </div>
                     </div>
+
+                    <script>
+                        $(document).ready(function () {
+                            const $btn = $('#surveyBtn');
+                            const $tooltip = $('#surveyTooltip');
+                            const $badge = $('#surveyBadge');
+
+                            // Start Flow
+                            $tooltip.fadeIn(400);
+                            $btn.addClass('btn-pulse');
+
+                            // 6 Second Timer
+                            setTimeout(function () {
+                                $tooltip.fadeOut(400);
+                                $badge.fadeIn(400);
+                            }, 6000);
+                        });
+                    </script>
                 <?php } elseif ($surveyExists) { ?>
                     <div style="margin-top: 20px;">
                         <div class="alert alert-success text-center" style="border-radius: 10px; font-weight: 600;">
@@ -414,5 +445,73 @@
         transform: translateY(-2px);
         box-shadow: 0 8px 25px rgba(52, 152, 219, 0.4);
         color: white;
+    }
+
+    /* Tooltip & Animation Styles */
+    .status-tooltip {
+        position: absolute;
+        top: -65px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 500;
+        z-index: 100;
+        width: 250px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        pointer-events: none;
+    }
+
+    .tooltip-arrow {
+        position: absolute;
+        bottom: -6px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 12px;
+        height: 12px;
+        background: #333;
+        transform: rotate(45deg) translateX(-50%);
+    }
+
+    .btn-pulse {
+        animation: pulse-orange 2s infinite;
+    }
+
+    @keyframes pulse-orange {
+        0% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(247, 148, 30, 0.7);
+        }
+
+        70% {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 15px rgba(247, 148, 30, 0);
+        }
+
+        100% {
+            transform: scale(1);
+            box-shadow: 0 0 0 0 rgba(247, 148, 30, 0);
+        }
+    }
+
+    .mini-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: #dd4b39;
+        color: white;
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 6px;
+        border: 2px solid #fff;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     }
 </style>

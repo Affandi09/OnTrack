@@ -379,6 +379,7 @@ switch ($_GET['modal']) {
 
     case "kb/viewArticle":
         $kbarticle = getRowById("kb_articles", $_GET['id']);
+        $kbarticle_files = $database->select("files", "*", ["kbarticleid" => $_GET['id']]);
         break;
 
     case "kb/editArticle":
@@ -388,6 +389,7 @@ switch ($_GET['modal']) {
             $selectedClients = unserialize($kbarticle['clients']);
         $kbcategories = getTable("kb_categories");
         $clients = getTable("clients");
+        $kbarticle_files = $database->select("files", "*", ["kbarticleid" => $_GET['id']]);
         break;
 
 

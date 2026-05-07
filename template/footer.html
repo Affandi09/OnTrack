@@ -155,14 +155,14 @@
 		?>
 
 		// BACKGROUND EMAIL QUEUE WORKER (UI CRON)
-		// Triggers every 60 seconds secretly in the background
+		// Triggers every 5 seconds to minimize delivery delay
 		setInterval(function () {
 			$.ajax({
 				url: 'crons/email_queue.php',
 				type: 'GET',
 				cache: false
 			});
-		}, 60000);
+		}, 5000);
 
 	});
 </script>
